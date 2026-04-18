@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+
+<body>
+
+  <div id="navbar-container"></div>
+  <div class="table-responsive">
+
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre del producto</th>
+          <th scope="col">Valor</th>
+          <th scope="col">Unidades disponibles</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Imagen</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <th scope="row">1</th>
+          <td>Teclado Mecánico RGB</td>
+          <td>$150.000</td>
+          <td>50</td>
+          <td>Teclado mecánico inalámbrico con iluminación RGB y switches blue.</td>
+          <td>
+            <img src="/Imagenes/1.Teclado.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">2</th>
+          <td>Mouse Gamer</td>
+          <td>$85.000</td>
+          <td>35</td>
+          <td>Mouse gamer con sensor óptico 7200 DPI y luces LED.</td>
+          <td>
+            <img src="/Imagenes/2.Mouse.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">3</th>
+          <td>Audífonos Gaming</td>
+          <td>$120.000</td>
+          <td>20</td>
+          <td>Audífonos con micrófono, sonido envolvente 7.1 y cancelación de ruido.</td>
+          <td>
+            <img src="/Imagenes/3.Audifonos.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">4</th>
+          <td>Monitor 24” Full HD</td>
+          <td>$650.000</td>
+          <td>15</td>
+          <td>Monitor LED 24 pulgadas, resolución 1920x1080, 75Hz.</td>
+          <td>
+            <img src="/Imagenes/4.Monitor 24” Full HD.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">5</th>
+          <td>Mouse Pad XL</td>
+          <td>$45.000</td>
+          <td>60</td>
+          <td>Mouse pad tamaño extendido antideslizante para escritorio gamer.</td>
+          <td>
+            <img src="/Imagenes/5.Mouse Pad XL.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">6</th>
+          <td>Cámara Web HD</td>
+          <td>$95.000</td>
+          <td>25</td>
+          <td>Cámara web 1080p con micrófono integrado ideal para streaming.</td>
+          <td>
+            <img src="/Imagenes/6.Cámara Web HD.webp" class="img-thumbnail" style="width: 80px; height: auto;">
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+
+  </div>
+
+  {% endblock contenido %}
