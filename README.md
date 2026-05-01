@@ -5,6 +5,8 @@ Este proyecto forma parte de un prototipo funcional orientado a la administraci�
 
 ---
 
+
+
 ## 🚀 Tecnologías utilizadas
 
 * Python
