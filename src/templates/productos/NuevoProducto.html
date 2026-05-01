@@ -1,0 +1,71 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}  
+
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <div class="card shadow-lg border-0">
+          <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Agregar Nuevo Producto</h4>
+          </div>
+
+          <div class="card-body">
+
+            <form>
+
+              <!-- Nombre Producto -->
+              <div class="form-group">
+                <label for="nombre">Nombre del producto</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Ej: Monitor">
+              </div>
+
+              <!-- Imagen Producto -->
+              <div class="form-group">
+                <label for="imagen">Cargar imagen del producto</label>
+                <input type="file" class="form-control-file" id="imagen">
+              </div>
+
+              <!-- Valor -->
+              <div class="form-group">
+                <label for="valor">Valor</label>
+                <input type="number" class="form-control" id="valor" placeholder="Ej: 150000">
+              </div>
+
+              <!-- Unidades en Inventario -->
+              <div class="form-group">
+                <label for="inventario">Unidades en inventario</label>
+                <input type="number" class="form-control" id="inventario" placeholder="Ej: 20">
+              </div>
+
+              <!-- Descripción -->
+              <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <textarea class="form-control" id="descripcion" rows="4"
+                  placeholder="Describe las características del producto..."></textarea>
+              </div>
+
+              <!-- Botón -->
+              <button type="button" class="btn btn-success btn-block">
+                Agregar producto
+              </button>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+    <script src="../../js/cargarnavbar.js"></script>
+
+{% endblock contenido %}  

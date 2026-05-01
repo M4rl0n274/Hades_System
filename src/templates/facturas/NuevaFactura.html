@@ -1,0 +1,155 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}  
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        <div class="card shadow-lg border-0">
+          <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Registrar Nueva Factura</h4>
+          </div>
+
+          <div class="card-body">
+
+            <form>
+
+              <!-- ID Factura -->
+              <div class="form-group">
+                <label for="idFactura">ID Factura</label>
+                <input type="text" class="form-control" id="idFactura" placeholder="Ej: FAC001">
+              </div>
+
+              <!-- Fecha Emisión -->
+              <div class="form-group">
+                <label for="fechaEmision">Fecha de emisión</label>
+                <input type="date" class="form-control" id="fechaEmision">
+              </div>
+
+              <!-- Vendedor -->
+              <!-- Vendedor -->
+              <div class="form-group">
+                <label for="vendedor">Vendedor</label>
+
+                <select class="form-control" id="vendedor" name="vendedor">
+                  <option value="" disabled selected>Seleccione un vendedor</option>
+                  <option value="Juan Perez">Juan Perez</option>
+                  <option value="Maria Gomez">Maria Gomez</option>
+                  <option value="Carlos Rodriguez">Carlos Rodriguez</option>
+                  <option value="Laura Martinez">Laura Martinez</option>
+                  <option value="Andres Lopez">Andres Lopez</option>
+                </select>
+
+              </div>
+
+              <!-- Productos -->
+             <!-- Productos -->
+<div class="form-group">
+  <label>Seleccionar productos</label>
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center">
+      <thead class="thead-light">
+        <tr>
+          <th>Seleccionar</th>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>IVA (19%)</th>
+          <th>Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td><input type="checkbox" name="productos" value="Monitor"></td>
+          <td>Monitor</td>
+          <td>150000</td>
+          <td>28500</td>
+          <td>
+            <input type="number" class="form-control" name="cantidad_Monitor" min="1" value="1">
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" name="productos" value="Teclado"></td>
+          <td>Teclado</td>
+          <td>50000</td>
+          <td>9500</td>
+          <td>
+            <input type="number" class="form-control" name="cantidad_Teclado" min="1" value="1">
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" name="productos" value="Mouse"></td>
+          <td>Mouse</td>
+          <td>30000</td>
+          <td>5700</td>
+          <td>
+            <input type="number" class="form-control" name="cantidad_Mouse" min="1" value="1">
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" name="productos" value="Audífonos"></td>
+          <td>Audífonos</td>
+          <td>80000</td>
+          <td>15200</td>
+          <td>
+            <input type="number" class="form-control" name="cantidad_Audifonos" min="1" value="1">
+          </td>
+        </tr>
+
+        <tr>
+          <td><input type="checkbox" name="productos" value="Laptop"></td>
+          <td>Laptop</td>
+          <td>1200000</td>
+          <td>228000</td>
+          <td>
+            <input type="number" class="form-control" name="cantidad_Laptop" min="1" value="1">
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+              <!-- Subtotal -->
+              <div class="form-group">
+                <label for="subtotal">Subtotal</label>
+                <input type="number" class="form-control" id="subtotal" placeholder="Ej: 250000">
+              </div>
+
+              <!-- IVA -->
+              <div class="form-group">
+                <label for="iva">IVA</label>
+                <input type="number" class="form-control" id="iva" placeholder="Ej: 47500">
+              </div>
+
+              <!-- Total -->
+              <div class="form-group">
+                <label for="total">Total</label>
+                <input type="number" class="form-control" id="total" placeholder="Ej: 297500">
+              </div>
+
+              <!-- Botón -->
+              <button type="submit" class="btn btn-success btn-block">
+                Registrar factura
+              </button>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+
+{% endblock contenido %}  
