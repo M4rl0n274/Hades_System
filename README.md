@@ -4,7 +4,7 @@ Aplicación web desarrollada con Flask para la gestión de clientes, productos y
 Este proyecto forma parte de un prototipo funcional orientado a la administración básica de ventas.
 
 ---
-
+prueba rama main
 
 
 ## 🚀 Tecnologías utilizadas
