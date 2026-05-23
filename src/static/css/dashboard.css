@@ -1,0 +1,45 @@
+/** Botones Dashboard
+
+/* 🔥 Ajuste clave para que no se sobreponga al sidebar */
+    .main-content {
+        margin-left: 300px;
+        /* ancho sidebar (270px + márgenes) */
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Responsive (cuando tu sidebar cambia en móvil) */
+    @media (max-width: 1024px) {
+        .main-content {
+            margin-left: 0;
+            margin-top: 0px;
+            /* espacio para navbar horizontal */
+        }
+    }
+
+    body {
+        background: #f5f6fa;
+    }
+
+    .card-dashboard {
+        border: none;
+        border-radius: 15px;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .card-dashboard:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body {
+        padding: 40px 20px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
