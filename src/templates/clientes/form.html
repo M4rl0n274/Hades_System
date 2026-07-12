@@ -1,9 +1,47 @@
 {% extends 'layout.html' %}
 
 {% block contenido %}
-<div id="navbar-container"></div>
+
+<form method="POST">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="documento">Documento</label>
+      <input type="text" class="form-control" id="documento" name="documento" placeholder="Número de Documento">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="nombre">Nombre</label>
+      <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre completo">
+    </div>
 
 
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">Email</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="telefono">Teléfono</label>
+      <input type="text" class="form-control" id="telefono" name="telefono" placeholder="658978">
+    </div>
+
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="direccion">Dirección</label>
+      <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Calle 3 # 12 - 21">
+    </div>
+
+
+
+  </div>
+
+  <button type="submit" class="btn btn-primary">Enviar</button>
+</form>
+
+
+<!--* Se comenta el anterior formulario con bootstrap-->
+<!-- <div id="navbar-container"></div>
 <div class="container mt-5 mb-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
@@ -15,10 +53,11 @@
 
         <div class="card-body">
 
+          
 
 
-
-          <form>
+          
+          <form method="post">
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="inputPassword4">Nombre</label>
@@ -121,6 +160,6 @@
 
     </div>
   </div>
-</div>
+</div> -->
 
 {% endblock contenido %}

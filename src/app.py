@@ -1,11 +1,22 @@
-from flask import Flask, render_template
+# from flask import Flask, render_template
 
-app = Flask(__name__)
+# app = Flask(__name__)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+from src import crate_app
+
+app = crate_app('development')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print(' Frontend corriemdo en http://localhost:5001')
+    app.run(debug=True, port=5001)
 
-@app.route("/")
+
+#* Ahora las rutas seran gestionadas por los archivos controller
+
+'''@app.route("/")
 def index():
     return render_template("index.html", nombre_usuario = "Marlon Quintero")
 
@@ -39,3 +50,5 @@ def nuevafactura():
 @app.route("/ver-factura")
 def verfactura():
     return render_template("facturas/VerFactura.html")
+
+'''
