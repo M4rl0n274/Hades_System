@@ -1,0 +1,61 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main>
+    <div class="container mt-4">
+        <h2 class="mb-4">Registro de Productos</h2>
+
+        <form method="POST">
+            <!-- Bloque 1: Información Personal -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="id_categoria">Categoría</label>
+                    <input type="number" class="form-control" id="id_categoria" name="id_categoria"
+                        placeholder="Ingrese el número de la Categoría">
+                </div>
+
+
+                <div class="form-group col-md-6">
+                    <label for="nombre_producto">Nombre del producto</label>
+                    <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" placeholder="Ingrese el nombre del Producto">
+                </div>
+            </div>
+
+            <!-- Bloque 2: Datos de Contacto y Edad -->
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="descripcion">Descripción</label>
+                    <input type="Text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese una descripción">
+                </div>
+
+
+                <div class="form-group col-md-4">
+                    <label for="valor_unitario">Costo</label>
+                    <input type="number" class="form-control" id="valor_unitario" name="valor_unitario" placeholder="Ingrese el costo de una unidad">
+                </div>
+
+
+                <div class="form-group col-md-4">
+                    <label for="documentoIdentidad">Stock</label>
+                    <input type="number" class="form-control" id="stock" name="stock"
+                        placeholder="Ingrese la cantidad en Stock">
+                </div>
+            </div>
+
+            <!-- Bloque 3: Ubicación y Fechas -->
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="codigo">Código</label>
+                    <input type="text" class="form-control" id="codigo" name="codigo"
+                        placeholder="Ingree el código del producto">
+                </div>
+
+
+            <!-- Botón de envío completamente visible -->
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary px-4">Enviar</button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

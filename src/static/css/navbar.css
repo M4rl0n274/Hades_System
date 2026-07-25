@@ -229,3 +229,114 @@ body {
         margin: 40px 0 30px;
     }
 }
+
+/* ==========================================================================
+   Solución para Pantallas Cortas Verticalmente (Previene superposiciones)
+   ========================================================================== */
+
+/* Solo se aplica en computadoras/vistas de escritorio donde la altura sea menor a 650px */
+@media (min-width: 1024px) and (max-height: 650px) {
+    
+    /* 1. Volvemos el contenedor del menú scrollable */
+    .sidebar-nav {
+        height: calc(100% - 100px); /* Resta el espacio del header del sidebar */
+        overflow-y: auto;           /* Activa la barra de desplazamiento si falta espacio */
+        overflow-x: hidden;
+        padding-bottom: 110px;      /* Deja un colchón de espacio para que no tape el contenido inferior */
+        scrollbar-width: thin;      /* Hace la barra de scroll delgada en navegadores modernos */
+    }
+
+    /* Estilo sutil para la barra de desplazamiento en Chrome/Safari/Edge */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+    }
+
+    /* 2. Cambiamos el menú secundario de 'absolute' a 'relative' para que fluya de forma natural
+       detrás del menú principal en lugar de flotar fijamente abajo y encimarse */
+    .sidebar-nav .secondary-nav {
+        position: relative;
+        bottom: auto;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   REAJUSTE DE MAQUETACIÓN: Control de Submenús y Redimensión de Main
+   ========================================================================== */
+
+/* 1. Redimensionamiento fluido para el contenedor principal de tu app */
+main, .main-content {
+    margin-left: 302px; 
+    padding: 20px;
+    transition: margin-left 0.4s ease;
+}
+
+/* Sigue a la barra cuando se colapsa minimizando el espacio residual */
+main.sidebar-collapsed, .main-content.sidebar-collapsed {
+    margin-left: 117px; 
+}
+
+/* Ajuste responsivo para el breakpoint de tu media-query */
+@media (max-width: 1024px) {
+    main, .main-content,
+    main.sidebar-collapsed, .main-content.sidebar-collapsed {
+        margin-left: 16px;
+        margin-right: 16px;
+        padding-top: 80px; 
+    }
+}
+
+/* 2. Control de Alturas e Inclusión de Animación para los Submenús */
+aside.sidebar .sidebar-nav .nav-list .nav-item {
+    transition: max-height 0.4s ease !important;
+    overflow: hidden !important;
+    max-height: 48px !important; /* Altura fija predeterminada (Oculta las opciones) */
+    display: block !important;
+}
+
+/* Permite que crezca suavemente cuando JavaScript activa la clase */
+aside.sidebar .sidebar-nav .nav-list .nav-item.dropdown-active {
+    max-height: 250px !important; 
+}
+
+/* Contenedor del submenú real */
+aside.sidebar .sidebar-nav .nav-item .submenu {
+    list-style: none !important;
+    padding-left: 50px !important;
+    padding-top: 4px !important;
+    padding-bottom: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+/* Enlaces internos del submenú */
+aside.sidebar .sidebar-nav .nav-item .submenu a {
+    color: rgba(255, 255, 255, 0.65) !important;
+    text-decoration: none !important;
+    font-size: 0.85rem !important;
+    display: block !important;
+    padding: 3px 0 !important;
+    background: none !important; 
+    transition: color 0.3s ease, padding-left 0.3s ease !important;
+}
+
+aside.sidebar .sidebar-nav .nav-item .submenu a:hover {
+    color: #ffffff !important;
+    padding-left: 4px !important;
+}
+
+/* Si la barra completa se colapsa, obligamos a ocultar todo de golpe */
+aside.sidebar.collapsed .sidebar-nav .nav-list .nav-item {
+    max-height: 48px !important;
+}
+
+aside.sidebar.collapsed .sidebar-nav .nav-item .submenu {
+    display: none !important;
+}

@@ -1,41 +1,51 @@
-from flask import Flask, render_template
+# from flask import Flask, render_template
 
-app = Flask(__name__)
+# app = Flask(__name__)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+# @app.route("/")
+# def index():
+#     return render_template("index.html", nombre_usuario = "Marlon Quintero")
+
+
+
+from src import create_app
+
+app = create_app('development')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print('✓ Frontend corriendo en http://localhost:5001')
+    app.run(debug=True, port=5001)
 
-@app.route("/")
-def index():
-    return render_template("index.html", nombre_usuario = "Marlon Quintero")
+# #! Rutas Clientes
 
-#! Rutas Clientes
+# @app.route("/nuevo-cliente")
+# def nuevoCliente():
+#     return render_template("clientes/NuevoCliente.html")
 
-@app.route("/nuevo-cliente")
-def nuevoCliente():
-    return render_template("clientes/NuevoCliente.html")
-
-@app.route("/ver-clientes")
-def listaClientes():
-    return render_template("clientes/VerClientes.html")
+# @app.route("/ver-clientes")
+# def listaClientes():
+#     return render_template("clientes/VerClientes.html")
 
 
-#! Rutas Productos
+# #! Rutas Productos
 
-@app.route("/nuevo-producto")
-def nuevoproducto():
-    return render_template("productos/NuevoProducto.html")
+# @app.route("/nuevo-producto")
+# def nuevoproducto():
+#     return render_template("productos/NuevoProducto.html")
 
-@app.route("/ver-producto")
-def verproducto():
-    return render_template("productos/VerProducto.html")
+# @app.route("/ver-producto")
+# def verproducto():
+#     return render_template("productos/VerProducto.html")
 
-#! Rutas Facturas
+# #! Rutas Facturas
 
-@app.route("/nueva-factura")
-def nuevafactura():
-    return render_template("facturas/NuevaFactura.html")
+# @app.route("/nueva-factura")
+# def nuevafactura():
+#     return render_template("facturas/NuevaFactura.html")
 
-@app.route("/ver-factura")
-def verfactura():
-    return render_template("facturas/VerFactura.html")
+# @app.route("/ver-factura")
+# def verfactura():
+#     return render_template("facturas/VerFactura.html")
