@@ -1,0 +1,38 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}  
+
+<body>
+
+  <table class="table" style="margin: 0 auto; width: auto; position: relative; z-index: 10;">
+
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">ID Cliente</th>      
+      <th scope="col">ID Vendedor</th>      
+      <th scope="col">ID Usuario</th>
+      <th scope="col">Fecha Factura</th>
+      <th scope="col">Subtotal</th>
+      <th scope="col">IVA</th>
+      <th scope="col">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for factura in facturas %}
+      <tr>
+        <th scope="row">{{ factura.id }}</th>
+        <td>{{ factura.id_cliente }}</td>     
+        <td>{{ factura.id_vendedor }}</td>     
+        <td>{{ factura.id_usuario }}</td>
+        <td>{{ factura.fecha_factura }}</td>
+        <td>{{ factura.subtotal }}</td>
+        <td>{{ factura.iva }}</td>
+        <td>{{ factura.total }}</td>
+      </tr>
+    {% endfor %}
+   
+  </tbody>
+</table>
+
+{% endblock %}

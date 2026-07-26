@@ -48,7 +48,7 @@ def nuevo():
 
             })  
             
-            flash('Cliente creado exitosamente', 'success')
+            flash('producto creado exitosamente', 'success')
             return redirect(url_for('productos.index'))
         except APIError as e:
             flash(f'Error al crear cliente: {e.message}', 'danger')
