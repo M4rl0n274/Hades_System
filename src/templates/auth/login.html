@@ -1,0 +1,96 @@
+{% extends "navBar.html" %}
+
+{% block title %}Iniciar sesión — FacturApp{% endblock %}
+
+{% block barraNavegacion %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="col-md-5 col-lg-4">
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+
+        <div class="text-center mb-4">
+          <h1 class="h4 mb-1">FacturApp</h1>
+          <p class="text-muted small mb-0">Ingresa con tu cuenta</p>
+        </div>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+          {% for categoria, mensaje in mensajes %}
+            <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2" role="alert">
+              {{ mensaje }}
+              <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email"
+                   class="form-control"
+                   id="email"
+                   name="email"
+                   value="{{ email }}"
+                   placeholder="usuario@sena.edu.co"
+                   required
+                   autofocus
+                   autocomplete="username">
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+              <input type="password"
+                     class="form-control"
+                     id="password"
+                     name="password"
+                     required
+                     autocomplete="current-password">
+              <button class="btn btn-outline-secondary"
+                      type="button"
+                      id="toggle-password"
+                      tabindex="-1"
+                      aria-label="Mostrar u ocultar contraseña">
+                <span id="icono-ojo">Ver</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" id="btn-entrar">
+            Entrar
+          </button>
+
+        </form>
+
+        <hr class="my-4">
+
+        <p class="text-center text-muted small mb-0">
+          ¿No tienes cuenta?
+          <a href="{{ url_for('auth.registro') }}">Regístrate aquí</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Mostrar / ocultar contraseña
+  document.getElementById('toggle-password').addEventListener('click', function () {
+    const campo = document.getElementById('password');
+    const icono = document.getElementById('icono-ojo');
+    const oculto = campo.type === 'password';
+    campo.type = oculto ? 'text' : 'password';
+    icono.textContent = oculto ? 'Ocultar' : 'Ver';
+  });
+
+  // Evita el doble envío si el backend se demora
+  document.querySelector('form').addEventListener('submit', function () {
+    const btn = document.getElementById('btn-entrar');
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+  });
+</script>
+{% endblock %}
