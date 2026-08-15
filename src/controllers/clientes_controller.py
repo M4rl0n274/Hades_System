@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from src.clients.api_client import APIClient, APIError
+from src.controllers.auth_controller import login_required, rol_required
 
 cliente_bp = Blueprint('clientes', __name__)
 
@@ -9,6 +10,8 @@ def _client():
 
 #* mostrar información
 @cliente_bp.route('/')
+#* decorado para que el login sea requerido
+@login_required
 def index():
     q = request.args.get('q', '').strip()
     try:
@@ -23,6 +26,8 @@ def index():
 
 #* Post de información
 @cliente_bp.route('/nuevo', methods=['GET', 'POST'])
+#* decorado para que el login sea requerido
+@login_required
 def nuevo():
     if request.method == 'POST':
         nombre = request.form.get('nombre')
