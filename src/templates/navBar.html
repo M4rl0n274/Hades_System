@@ -17,10 +17,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
 
 
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
 </head>
 
@@ -62,7 +69,7 @@
                     </ul>
                 </li>
 
-            
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">
@@ -135,7 +142,7 @@
                 </li>
             </ul>
             <!--! Secondary bottom nav-->
-            <ul class="nav-list secondary-nav">
+            <!-- <ul class="nav-list secondary-nav">
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">
@@ -144,20 +151,44 @@
                         <span class="nav-label">Perfil</span>
                     </a>
                     <span class="nav-tooltip">Perfil</span>
-                </li>
+                </li> -->
+
+            <ul class="nav-list secondary-nav">
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ url_for('auth.perfil') }}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">
+                            account_circle
+                        </span>
+                        <span class="nav-label">
+                            {{ session.get('usuario', {}).get('nombre', 'Perfil') }}
+                        </span>
+                    </a>
+                    <span class="nav-tooltip">
+                        {{ session.get('usuario', {}).get('nombre', 'Perfil') }}
+                    </span>
+                </li>
+
+                <!-- Aquí va el botón de logout que arreglamos antes -->
+                
+                
+                <li class="nav-item">
+                    <form action="{{ url_for('auth.logout') }}" method="POST" id="form-logout">
+                    <button type="submit" class="nav-link logout-btn">
                         <span class="nav-icon material-symbols-rounded">
                             logout
                         </span>
                         <span class="nav-label">Cerrar Sesión</span>
-                    </a>
-                    <span class="nav-tooltip">Cerrar Sesión</span>
-                </li>
-            </ul>
+                    </button>
+                </form>
+                <span class="nav-tooltip">Cerrar Sesión</span>
+            </li>
+        </ul>
+    
+
+
         </nav>
     </aside>
-<script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
 
     {% block barraNavegacion %}
     {% endblock %}

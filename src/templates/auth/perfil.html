@@ -1,0 +1,76 @@
+{% extends "navBar.html" %}
+
+{% block title %}Mi Perfil — FacturApp{% endblock %}
+
+{% block barraNavegacion %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <!-- Alertas en caso de que ocurra un APIError -->
+      {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+          <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3" role="alert">
+            {{ mensaje }}
+            <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+          <!-- Encabezado: Avatar, Nombre y Rol -->
+          <div class="text-center mb-4">
+            <span class="material-symbols-rounded text-primary" style="font-size: 64px;">
+              account_circle
+            </span>
+            <h1 class="h4 mb-1 mt-2">
+              {{ usuario.get('nombre', '') }} {{ usuario.get('apellido', '') }}
+            </h1>
+            <span class="badge bg-primary text-capitalize px-3 py-2">
+              {{ usuario.get('rol', 'Usuario') }}
+            </span>
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Detalles del usuario enviados por /auth/me -->
+          <div class="list-group list-group-flush">
+            
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+              <span class="text-muted small d-flex align-items-center gap-2">
+                <span class="material-symbols-rounded fs-5">mail</span> Correo electrónico
+              </span>
+              <span class="fw-semibold">{{ usuario.get('correo', 'N/A') }}</span>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+              <span class="text-muted small d-flex align-items-center gap-2">
+                <span class="material-symbols-rounded fs-5">badge</span> Documento de Identidad
+              </span>
+              <span class="fw-semibold">{{ usuario.get('documento_identidad', 'N/A') }}</span>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+              <span class="text-muted small d-flex align-items-center gap-2">
+                <span class="material-symbols-rounded fs-5">admin_panel_settings</span> Rol en el Sistema
+              </span>
+              <span class="fw-semibold text-capitalize">{{ usuario.get('rol', 'N/A') }}</span>
+            </div>
+
+          </div>
+
+          <div class="mt-4 pt-2">
+            <a href="{{ url_for('clientes.index') }}" class="btn btn-outline-secondary w-100">
+              Volver al inicio
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

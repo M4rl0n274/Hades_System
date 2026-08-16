@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from src.clients.api_client import APIClient, APIError
 from datetime import datetime
+from src.controllers.auth_controller import login_required, rol_required
 
 vendedores_bp = Blueprint('vendedores', __name__)
 
@@ -9,6 +10,8 @@ def _client():
     return APIClient(session.get('api_token'))
 
 @vendedores_bp.route('/')
+@login_required
+@rol_required('Administrador')
 def index():
     q = request.args.get('q', '').strip()
     try:
@@ -22,6 +25,8 @@ def index():
     return render_template('vendedores/VerVendedores.html', vendedores=vendedores, q=q)
 
 @vendedores_bp.route('/nuevo', methods=['GET', 'POST'])
+@login_required
+@rol_required('Administrador')
 def nuevo():
     if request.method == 'POST':
         nombre = request.form.get('nombre')

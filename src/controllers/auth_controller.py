@@ -71,20 +71,20 @@ def sesion_expirada():
 def login():
     # Si ya hay sesión, no tiene sentido mostrar el formulario
     if session.get('api_token'):
-         return render_template('index.html')
+         return redirect('index.html')
 
     if request.method == 'POST':
-        email = request.form.get('email', '').strip()
+        correo = request.form.get('correo', '').strip()
         password = request.form.get('password', '')
 
-        if not email or not password:
+        if not correo or not password:
             flash('Correo y contraseña son obligatorios.', 'danger')
-            return render_template('auth/login.html', email=email)
+            return render_template('auth/login.html', correo=correo)
 
         try:
             # APIClient sin token: el login es la ruta pública
             data = APIClient().post('/auth/login', json={
-                'email': email,
+                'correo': correo,
                 'password': password
             })
 
@@ -92,7 +92,7 @@ def login():
             session['usuario'] = data['usuario']
             session.permanent = True
 
-            flash(f"Bienvenido, {data['usuario']['nombre']}.", 'success')
+            # flash(f"Bienvenido, {data['usuario']['nombre']}.", 'success')
 
             # Vuelve a donde el usuario quería ir antes de que lo mandaran acá
             destino = session.pop('next_url', None)
@@ -100,11 +100,11 @@ def login():
 
         except APIError as e:
             flash(e.message, 'danger')
-            # Se devuelve el email para no obligar a reescribirlo,
+            # Se devuelve el correo para no obligar a reescribirlo,
             # nunca la contraseña
-            return render_template('auth/login.html', email=email)
+            return render_template('auth/login.html', correo=correo)
 
-    return render_template('auth/login.html', email='')
+    return render_template('auth/login.html', correo='')
 
 
 @auth_bp.route('/logout', methods=['POST'])
@@ -122,7 +122,7 @@ def registro():
     if request.method == 'POST':
         payload = {
             'nombre':   request.form.get('nombre', '').strip(),
-            'email':    request.form.get('email', '').strip(),
+            'correo':    request.form.get('correo', '').strip(),
             'password': request.form.get('password', ''),
         }
         confirmacion = request.form.get('password_confirmacion', '')

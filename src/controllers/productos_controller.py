@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from src.clients.api_client import APIClient, APIError
 from datetime import datetime
+from src.controllers.auth_controller import login_required, rol_required
 
 producto_bp = Blueprint('productos', __name__)
 
@@ -9,6 +10,8 @@ def _client():
     return APIClient(session.get('api_token'))
 
 @producto_bp.route('/')
+@login_required
+@rol_required('Administrador', 'Vendedor')
 def index():
     q = request.args.get('q', '').strip()
     try:
@@ -22,6 +25,8 @@ def index():
     return render_template('productos/VerProducto.html', productos=productos, q=q)
 
 @producto_bp.route('/nuevo', methods=['GET', 'POST'])
+@login_required
+@rol_required('Administrador', 'Vendedor')
 def nuevo():
     if request.method == 'POST':
         id_categoria = request.form.get('id_categoria')

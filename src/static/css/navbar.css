@@ -114,6 +114,20 @@ body {
     transition: 0.4s ease;
 }
 
+/* ==========================================================================
+   Ajuste para Botón de Logout (<button> dentro de <form>)
+   ========================================================================== */
+
+.sidebar-nav .nav-link.logout-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    text-align: left;
+}
+
 .sidebar-nav .nav-link:hover {
     color: #151A2D;
     background: #fff;
