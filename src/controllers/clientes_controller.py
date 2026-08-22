@@ -15,6 +15,8 @@ def _client():
 def index():
     q = request.args.get('q', '').strip()
     try:
+        
+        
         data = _client().get('/clientes/')
         print(f"data: {data}")  # Debugging line to check the structure of the response
         clientes = APIClient.as_list(data)
