@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h2>Lista de Clientes</h2>
+
+    <!-- Formulario de Búsqueda (Corregido: clientes.index) -->
+    <form method="GET" action="{{ url_for('clientes.index') }}" class="mb-3 d-flex gap-2">
+        <input type="text" name="q" value="{{ request.args.get('q', '') }}" class="form-control" placeholder="Buscar cliente...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <!-- Tabla de Clientes -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.documento }}</td>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.direccion }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.email }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron clientes.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
+    {% include '_paginacion.html' %}
+</div>
+{% endblock contenido %}

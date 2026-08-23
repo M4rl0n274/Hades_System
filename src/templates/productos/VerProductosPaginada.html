@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block contenido %}
+
+<div class="container mt-4">
+    <h2>Lista de Productos</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Código</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Unidad de medida</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Categoría</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.codigo }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.unidad_medida }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.id_categoria }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron productos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
+    {% include '_paginacion.html' %}
+</div>
+{% endblock contenido %}
