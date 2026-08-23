@@ -1,0 +1,47 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<div class="container mt-4">
+  <h2>Lista de Clientes</h2>
+
+
+  <!-- Tabla de Clientes -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Apellido</th>
+        <th scope="col">Edad</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Documento de Identidad</th>
+        <th scope="col">Direccion</th>
+        <th scope="col">telefono</th>
+        <th scope="col">Fecha De Nacimiento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cliente in clientes %}
+      <tr>
+        <th scope="row">{{ cliente.id }}</th>
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.apellido }}</td>
+        <td>{{ cliente.edad }}</td>
+        <td>{{ cliente.correo }}</td>
+        <td>{{ cliente.documentoIdentidad }}</td>
+        <td>{{ cliente.direccion }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.FechaDeNacimiento }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center">No se encontraron clientes.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
+  {% include '_paginacion.html' %}
+</div>
+{% endblock  %}

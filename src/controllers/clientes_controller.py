@@ -12,17 +12,47 @@ def _client():
 @cliente_bp.route('/')
 @login_required
 @rol_required('Administrador', 'Vendedor')
+
+
+# def index():
+#     q = request.args.get('q', '').strip()
+#     try:
+#         data = _client().get('/clientes/')
+#         print(f"data: {data}")  # Debugging line to check the structure of the response
+#         clientes = APIClient.as_list(data)
+#     except APIError as e:        
+#         clientes = []
+
+#     print(clientes)  # Debugging line to check the structure of the response
+#     return render_template('Clientes/VerClientes.html', clientes=clientes, q=q)
+
+
 def index():
     q = request.args.get('q', '').strip()
+    meta = {}
+    page = request.args.get('page', 1, type=int)
+
     try:
-        data = _client().get('/clientes/')
+        params = {'page': page, 'per_page': 10}
+        if q:
+            params['q'] = q  
+    
+        data = _client().get('/clientes/', params=params)   # <-- ESTA ES LA LÍNEA MODIFICADA
         print(f"data: {data}")  # Debugging line to check the structure of the response
         clientes = APIClient.as_list(data)
-    except APIError as e:        
+        meta = data.get('meta', {}) if isinstance(data, dict) else {}
+        
+        if meta:
+            meta['pages'] = meta.get('total_pages', meta.get('pages', 1))
+            meta['prev_num'] = meta.get('page', 1) - 1
+            meta['next_num'] = meta.get('page', 1) + 1
+        
+    except Exception as e:
         clientes = []
 
     print(clientes)  # Debugging line to check the structure of the response
-    return render_template('Clientes/VerClientes.html', clientes=clientes, q=q)
+    return render_template('clientes/VerClientes.html', clientes=clientes, meta=meta)
+
 
 @cliente_bp.route('/nuevo', methods=['GET', 'POST'])
 @login_required

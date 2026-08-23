@@ -1,13 +1,14 @@
 {% extends 'navBar.html' %}
 
-{% block barraNavegacion %}  
+{% block barraNavegacion %}
+<div class="container mt-4">
+  <h2>Lista de Facturas</h2>
 
-<body>
 
-  <table class="table" style="margin: 0 auto; width: auto; position: relative; z-index: 10;">
-
-  <thead class="thead-dark">
-    <tr>
+  <!-- Tabla de Clientes -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
       <th scope="col">ID</th>
       <th scope="col">ID Cliente</th>      
       <th scope="col">ID Vendedor</th>      
@@ -16,10 +17,10 @@
       <th scope="col">Subtotal</th>
       <th scope="col">IVA</th>
       <th scope="col">Total</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for factura in facturas %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for factura in facturas %}
       <tr>
         <th scope="row">{{ factura.id }}</th>
         <td>{{ factura.id_cliente }}</td>     
@@ -30,9 +31,25 @@
         <td>{{ factura.iva }}</td>
         <td>{{ factura.total }}</td>
       </tr>
-    {% endfor %}
-   
-  </tbody>
-</table>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center">No se encontraron Facturas.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-{% endblock %}
+  <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
+  {% include '_paginacion.html' %}
+</div>
+{% endblock  %}
+
+
+
+
+
+
+
+
+
+

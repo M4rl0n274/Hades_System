@@ -1,0 +1,213 @@
+/* ==========================================================================
+   MAQUETACIÓN ADAPTABLE AL NAVBAR
+   ========================================================================== */
+/* Estado Expandido */
+.main-content {
+    margin-left: 302px; /* 270px width + 16px margin + 16px padding */
+    width: calc(100% - 302px);
+    padding: 24px;
+    /* Transición suave y sincronizada con el 0.4s del navbar */
+    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado Contraído / Colapsado */
+.main-content.sidebar-collapsed {
+    margin-left: 110px; /* Se ajusta exactamente al borde del sidebar minimizado */
+    width: calc(100% - 110px);
+}
+
+@media (max-width: 1024px) {
+    .main-content,
+    .main-content.sidebar-collapsed {
+        margin-left: 0;
+        width: 100%;
+        padding: 80px 16px 24px 16px;
+    }
+}
+
+/* ==========================================================================
+   CABECERA Y FILTROS DE TABLA
+   ========================================================================== */
+.table-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-title h2 {
+    color: #151A2D;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.badge-count {
+    background: #151A2D;
+    color: #ffffff;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.sort-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.custom-select {
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #151A2D;
+    outline: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-select:focus {
+    border-color: #151A2D;
+    box-shadow: 0 0 0 3px rgba(21, 26, 45, 0.1);
+}
+
+/* ==========================================================================
+   DISEÑO MODERNO DE TABLA
+   ========================================================================== */
+.table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.92rem;
+}
+
+.custom-table thead tr {
+    background-color: #151A2D;
+    color: #ffffff;
+}
+
+.custom-table th {
+    padding: 16px 18px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.custom-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.custom-table td {
+    padding: 14px 18px;
+    color: #334155;
+    white-space: nowrap;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+    color: #151A2D;
+}
+
+.text-secondary {
+    color: #64748b;
+}
+
+.empty-row td {
+    text-align: center;
+    padding: 32px;
+    color: #94a3b8;
+}
+
+.table-footer {
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   DISEÑO RESPONSIVO MÓVIL
+   ========================================================================== */
+@media (max-width: 768px) {
+    .custom-table thead {
+        display: none;
+    }
+
+    .custom-table, .custom-table tbody, .custom-table tr, .custom-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-table tr {
+        margin-bottom: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 8px 12px;
+        background: #ffffff;
+    }
+
+    .custom-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 6px;
+        border-bottom: 1px dashed #f1f5f9;
+        text-align: right;
+        white-space: normal;
+    }
+
+    .custom-table td:last-child {
+        border-bottom: none;
+    }
+
+    .custom-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #151A2D;
+        text-align: left;
+        padding-right: 12px;
+    }
+}

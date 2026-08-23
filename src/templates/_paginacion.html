@@ -1,0 +1,48 @@
+{% if meta and meta.pages and meta.pages > 1 %}
+
+<!--! Paginación reutilizable-->
+<nav aria-label="Navegación de páginas" class="my-4">
+  <ul class="pagination justify-content-center">
+    
+    <!-- Botón Anterior -->
+    <li class="page-item {% if not meta.has_prev %}disabled{% endif %}">
+      <a class="page-link" href="?page={{ meta.prev_num }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}" aria-label="Anterior">
+        <span aria-hidden="true">&laquo; Anterior</span>
+      </a>
+    </li>
+
+    <!-- Algoritmo de Paginación con Puntos Suspensivos (...) -->
+    {% set current = meta.page %}
+    {% set total = meta.pages %}
+
+    {% for p in range(1, total + 1) %}
+      {# Regla: Mostrar siempre página 1, última página, y 2 páginas alrededor de la actual #}
+      {% if p == 1 or p == total or (p >= current - 2 and p <= current + 2) %}
+        
+        <li class="page-item {% if p == current %}active{% endif %}">
+          <a class="page-link" href="?page={{ p }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}">
+            {{ p }}
+          </a>
+        </li>
+
+      {# Puntos suspensivos entre la p.1 y el bloque central #}
+      {% elif p == 2 and current - 2 > 2 %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+
+      {# Puntos suspensivos entre el bloque central y la última página #}
+      {% elif p == total - 1 and current + 2 < total - 1 %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+
+      {% endif %}
+    {% endfor %}
+
+    <!-- Botón Siguiente -->
+    <li class="page-item {% if not meta.has_next %}disabled{% endif %}">
+      <a class="page-link" href="?page={{ meta.next_num }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}" aria-label="Siguiente">
+        <span aria-hidden="true">Siguiente &raquo;</span>
+      </a>
+    </li>
+
+  </ul>
+</nav>
+{% endif %}

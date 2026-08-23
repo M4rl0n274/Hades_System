@@ -1,42 +1,77 @@
-{% extends 'navBar.html' %}
+    {% extends 'navBar.html' %}
 
-{% block barraNavegacion %}  
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Clientes</h2>
+      <span class="badge-count">{{ clientes|length }} registros</span>
+    </div>
 
-<body>
+    <!-- Controles y Filtro de Ordenamiento -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="nombre-asc">Nombre (A - Z)</option>
+          <option value="nombre-desc">Nombre (Z - A)</option>
+          <option value="apellido-asc">Apellido (A - Z)</option>
+          <option value="apellido-desc">Apellido (Z - A)</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="nombre">Nombre</th>
+            <th data-column="apellido">Apellido</th>
+            <th data-column="edad">Edad</th>
+            <th data-column="correo">Correo</th>
+            <th data-column="documento">Documento de Identidad</th>
+            <th data-column="direccion">Dirección</th>
+            <th data-column="telefono">Teléfono</th>
+            <th data-column="fecha">Fecha de Nacimiento</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for cliente in clientes %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">{{ cliente.id }}</td>
+            <td data-label="Nombre">{{ cliente.nombre }}</td>
+            <td data-label="Apellido">{{ cliente.apellido }}</td>
+            <td data-label="Edad">{{ cliente.edad }}</td>
+            <td data-label="Correo" class="text-secondary">{{ cliente.correo }}</td>
+            <td data-label="Documento">{{ cliente.documentoIdentidad }}</td>
+            <td data-label="Dirección">{{ cliente.direccion }}</td>
+            <td data-label="Teléfono">{{ cliente.telefono }}</td>
+            <td data-label="Fecha Nac.">{{ cliente.FechaDeNacimiento }}</td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="9">No se encontraron clientes en el sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-<!-- <table class="table"> -->
-  <table class="table" style="margin: 0 auto; width: auto; position: relative; z-index: 10;">
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
 
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Nombre</th>      
-      <th scope="col">Apellido</th>      
-      <th scope="col">Edad</th>
-      <th scope="col">Correo</th>
-      <th scope="col">Documento de Identidad</th>
-      <th scope="col">Direccion</th>
-      <th scope="col">telefono</th>
-      <th scope="col">Fecha De Nacimiento</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for cliente in clientes %}
-      <tr>
-        <th scope="row">{{ cliente.id }}</th>
-        <td>{{ cliente.nombre }}</td>     
-        <td>{{ cliente.apellido }}</td>     
-        <td>{{ cliente.edad }}</td>
-        <td>{{ cliente.correo }}</td>
-        <td>{{ cliente.documentoIdentidad }}</td>
-        <td>{{ cliente.direccion }}</td>
-        <td>{{ cliente.telefono }}</td>
-        <td>{{ cliente.FechaDeNacimiento }}</td>
-      </tr>
-    {% endfor %}
-   
-  </tbody>
-</table>
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
 
-{% endblock %}  
+{% endblock %}

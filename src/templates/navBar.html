@@ -11,6 +11,11 @@
     <!--Enlace a css nav bar-->
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v=99">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}?v=99">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}?v=99">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=99">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal_messages.css') }}?v=99">
     <!--Enlace a css botones dashboard-->
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}"> -->
     <!--Enlace a libreria de bootstrap para botones-->
@@ -188,11 +193,37 @@
 
         </nav>
     </aside>
-    <script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
+
 
     {% block barraNavegacion %}
     {% endblock %}
 
-</body>
 
+<!--* Modal que consume flash para mostrar mensajes cuando se crea, elimina o edita-->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-modal-overlay" id="flashModalOverlay">
+      <div class="flash-modal" role="dialog" aria-modal="true">
+        <button type="button" class="flash-modal-close" id="flashModalClose" aria-label="Cerrar">&times;</button>
+        <div class="flash-modal-body">
+          {% for category, message in messages %}
+            <div class="flash-alert flash-alert-{{ category }}">
+              <span class="flash-alert-icon">
+                {% if category == 'success' %}✓{% elif category == 'danger' %}✕{% elif category == 'warning' %}!{% else %}i{% endif %}
+              </span>
+              <span class="flash-alert-text">{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="flash-modal-footer">
+          <button type="button" class="flash-modal-btn" id="flashModalBtnCerrar">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+</body>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
+    <script src="{{ url_for('static', filename='js/modal_messages.js') }}?v=99"></script>
 </html>

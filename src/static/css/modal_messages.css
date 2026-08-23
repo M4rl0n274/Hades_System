@@ -1,0 +1,150 @@
+/* Overlay de fondo */
+.flash-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* por encima de todo, incluido tu navbar */
+  opacity: 0;
+  animation: flashFadeIn 0.25s ease forwards;
+}
+
+@keyframes flashFadeIn {
+  to { opacity: 1; }
+}
+
+.flash-modal-overlay.closing {
+  animation: flashFadeOut 0.2s ease forwards;
+}
+
+@keyframes flashFadeOut {
+  to { opacity: 0; }
+}
+
+/* Caja del modal */
+.flash-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  transform: translateY(-20px) scale(0.97);
+  animation: flashPopIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes flashPopIn {
+  to { transform: translateY(0) scale(1); }
+}
+
+/* Botón de cerrar (la "X") */
+.flash-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  z-index: 1;
+}
+
+.flash-modal-close:hover {
+  color: #222;
+}
+
+/* Cuerpo */
+.flash-modal-body {
+  padding: 2rem 1.5rem 1rem 1.5rem;
+}
+
+.flash-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.flash-alert:last-child {
+  margin-bottom: 0;
+}
+
+.flash-alert-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+/* Colores por categoría */
+.flash-alert-success {
+  background: #e6f7ed;
+  color: #1a7f4b;
+}
+.flash-alert-success .flash-alert-icon {
+  background: #1a7f4b;
+}
+
+.flash-alert-danger {
+  background: #fdeaea;
+  color: #c0392b;
+}
+.flash-alert-danger .flash-alert-icon {
+  background: #c0392b;
+}
+
+.flash-alert-warning {
+  background: #fff8e6;
+  color: #8a6400;
+}
+.flash-alert-warning .flash-alert-icon {
+  background: #d1a300;
+}
+
+.flash-alert-info {
+  background: #e8f2fd;
+  color: #1a5f9c;
+}
+.flash-alert-info .flash-alert-icon {
+  background: #1a5f9c;
+}
+
+/* Footer */
+.flash-modal-footer {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flash-modal-btn {
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  padding: 0.55rem 1.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s ease;
+}
+
+.flash-modal-btn:hover {
+  background: #1a242f;
+}

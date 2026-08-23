@@ -1,0 +1,130 @@
+/* ==========================================================================
+   SISTEMA DE FORMULARIOS REUTILIZABLE
+   ========================================================================== */
+
+/* Cabecera */
+.form-header-wrapper {
+    margin-bottom: 20px;
+}
+
+.form-header-wrapper h2 {
+    color: #151A2D;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+/* Contenedor tipo Tarjeta */
+.form-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    padding: 28px;
+    width: 100%;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ==========================================================================
+   SISTEMA DE GRID DE COLUMNAS (Modular y Reutilizable)
+   ========================================================================== */
+.form-grid {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+}
+
+.grid-col-1 { grid-template-columns: 1fr; }
+.grid-col-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-col-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-col-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Grupos e Inputs */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #151A2D;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #151A2D;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+.form-control:focus {
+    border-color: #151A2D;
+    box-shadow: 0 0 0 3px rgba(21, 26, 45, 0.1);
+}
+
+/* Estilo estandarizado para campos de tipo fecha e icono interno */
+input[type="date"].form-control {
+    color: #151A2D;
+    font-family: inherit;
+}
+
+/* Botón Primary Alineado al Estilo del Navbar */
+.form-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #151A2D;
+    color: #ffffff;
+    padding: 11px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background-color: #242c48;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* ==========================================================================
+   RESPONSIVO MÓVIL Y TABLET
+   ========================================================================== */
+@media (max-width: 900px) {
+    .grid-col-2,
+    .grid-col-3,
+    .grid-col-4 {
+        grid-template-columns: 1fr; /* Pasa a 1 columna automáticamente en pantallas reducidas */
+    }
+
+    .form-card {
+        padding: 20px 16px;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}

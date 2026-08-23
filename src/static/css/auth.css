@@ -1,0 +1,182 @@
+/* ==========================================================================
+   LAYOUT Y CONTENEDOR DE AUTENTICACIÓN
+   ========================================================================== */
+.auth-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 48px);
+    padding: 20px;
+}
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 32px;
+    transition: transform 0.3s ease;
+}
+
+/* Encabezado */
+.auth-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.auth-logo {
+    width: 52px;
+    height: 52px;
+    background-color: #151A2D;
+    color: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+}
+
+.auth-logo span {
+    font-size: 1.8rem;
+}
+
+.auth-header h2 {
+    color: #151A2D;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.auth-header p {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin: 0;
+}
+
+/* ==========================================================================
+   ALERTAS FLASH (FLASK)
+   ========================================================================== */
+.auth-alerts {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-danger, .alert-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.alert-warning {
+    background-color: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fef08a;
+}
+
+.alert-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: inherit;
+    line-height: 1;
+}
+
+/* ==========================================================================
+   INPUTS CON ICONOS E INTERACCIÓN
+   ========================================================================== */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .form-control {
+    padding-right: 42px;
+}
+
+.input-icon, .btn-toggle-password {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.btn-toggle-password:hover {
+    color: #151A2D;
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Divisor */
+.auth-divider {
+    height: 1px;
+    background-color: #f1f5f9;
+    margin: 24px 0;
+}
+
+/* Pie del Formulario */
+.auth-footer {
+    text-align: center;
+}
+
+.auth-footer p {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.auth-footer a {
+    color: #151A2D;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 24px 20px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+}
