@@ -1,55 +1,70 @@
 {% extends 'navBar.html' %}
 
 {% block barraNavegacion %}
-<div class="container mt-4">
-  <h2>Lista de Facturas</h2>
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Facturas</h2>
+      <span class="badge-count">{{ facturas|length }} registros</span>
+    </div>
 
+    <!-- Controles y Filtro de Ordenamiento -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <!-- Tabla de Clientes -->
-  <table class="table table-striped">
-    <thead>
-      <tr>
-      <th scope="col">ID</th>
-      <th scope="col">ID Cliente</th>      
-      <th scope="col">ID Vendedor</th>      
-      <th scope="col">ID Usuario</th>
-      <th scope="col">Fecha Factura</th>
-      <th scope="col">Subtotal</th>
-      <th scope="col">IVA</th>
-      <th scope="col">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for factura in facturas %}
-      <tr>
-        <th scope="row">{{ factura.id }}</th>
-        <td>{{ factura.id_cliente }}</td>     
-        <td>{{ factura.id_vendedor }}</td>     
-        <td>{{ factura.id_usuario }}</td>
-        <td>{{ factura.fecha_factura }}</td>
-        <td>{{ factura.subtotal }}</td>
-        <td>{{ factura.iva }}</td>
-        <td>{{ factura.total }}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="6" class="text-center">No se encontraron Facturas.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="cliente">ID Cliente</th>
+            <th data-column="vendedor">ID Vendedor</th>
+            <th data-column="usuario">ID Usuario</th>
+            <th data-column="fecha">Fecha Factura</th>
+            <th data-column="subtotal">Subtotal</th>
+            <th data-column="iva">IVA</th>
+            <th data-column="total">Total</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for factura in facturas %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">#{{ factura.id }}</td>
+            <td data-label="ID Cliente">{{ factura.id_cliente }}</td>
+            <td data-label="ID Vendedor">{{ factura.id_vendedor }}</td>
+            <td data-label="ID Usuario">{{ factura.id_usuario }}</td>
+            <td data-label="Fecha Factura">{{ factura.fecha_factura }}</td>
+            <td data-label="Subtotal" class="text-secondary">${{ factura.subtotal }}</td>
+            <td data-label="IVA" class="text-secondary">${{ factura.iva }}</td>
+            <td data-label="Total" class="font-weight-bold">${{ factura.total }}</td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="8">No se encontraron facturas registradas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-  <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
-  {% include '_paginacion.html' %}
-</div>
-{% endblock  %}
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
 
-
-
-
-
-
-
-
-
-
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+{% endblock %}

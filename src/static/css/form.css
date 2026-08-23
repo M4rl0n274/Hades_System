@@ -128,3 +128,85 @@ input[type="date"].form-control {
         width: 100%;
     }
 }
+
+
+
+/* ==========================================================================
+   ESTILOS COMPLEMENTARIOS PARA FORMULARIOS DINÁMICOS
+   ========================================================================== */
+.form-divider {
+    height: 1px;
+    background-color: #f1f5f9;
+    margin: 8px 0;
+}
+
+.dynamic-section-header h3 {
+    font-size: 1.1rem;
+    color: #151A2D;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.dynamic-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dynamic-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    background-color: #f8fafc;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.flex-action { flex: 0 0 auto; }
+
+/* Botones Auxiliares */
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #151A2D;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+@media (max-width: 600px) {
+    .dynamic-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-danger {
+        width: 100%;
+    }
+}

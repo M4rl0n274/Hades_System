@@ -1,61 +1,71 @@
 {% extends 'navBar.html' %}
 
 {% block barraNavegacion %}
-<main>
-    <div class="container mt-4">
-        <h2 class="mb-4">Registro de Factura</h2>
+<main class="main-content">
+  <!-- Cabecera Reutilizable -->
+  <div class="form-header-wrapper">
+    <h2>Registro de Factura</h2>
+  </div>
 
-        <form method="POST" action="{{ url_for('facturas.nuevo') }}">
+  <!-- Tarjeta Contenedora del Formulario -->
+  <div class="form-card">
+    <form method="POST" action="{{ url_for('facturas.nuevo') }}" class="custom-form">
+      
+      <!-- Seccion 1: Datos de la Venta (3 Columnas) -->
+      <div class="form-grid grid-col-3">
+        <div class="form-group">
+          <label for="id_cliente">ID Cliente</label>
+          <input type="number" class="form-control" id="id_cliente" name="id_cliente" placeholder="Ej: 1" required>
+        </div>
 
-            <div class="form-row">
-                <div class="form-group col-md-4">
-                    <label for="id_cliente">ID Cliente</label>
-                    <input type="number" class="form-control" id="id_cliente" name="id_cliente" placeholder="Ej: 1" required>
-                </div>
+        <div class="form-group">
+          <label for="id_vendedor">ID Vendedor</label>
+          <input type="number" class="form-control" id="id_vendedor" name="id_vendedor" placeholder="Ej: 1" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="id_usuario">ID Usuario</label>
+          <input type="number" class="form-control" id="id_usuario" name="id_usuario" placeholder="Ej: 1" required>
+        </div>
+      </div>
 
-                <div class="form-group col-md-4">
-                    <label for="id_vendedor">ID Vendedor</label>
-                    <input type="number" class="form-control" id="id_vendedor" name="id_vendedor" placeholder="Ej: 1" required>
-                </div>
-                
-                <div class="form-group col-md-4">
-                    <label for="id_usuario">ID Usuario</label>
-                    <input type="number" class="form-control" id="id_usuario" name="id_usuario" placeholder="Ej: 1" required>
-                </div>
-            </div>
+      <div class="form-divider"></div>
+      
+      <!-- Sección 2: Detalle de Productos -->
+      <div class="dynamic-section-header">
+        <h3>Detalle de Productos</h3>
+      </div>
 
-            <hr class="my-4">
-            <h4 class="mb-3">Detalle de Productos</h4>
+      <!-- Contenedor Dinámico de Productos -->
+      <div id="productos-container" class="dynamic-items-wrapper">
+        <div class="producto-item dynamic-row">
+          <div class="form-group flex-2">
+            <label>ID Producto</label>
+            <input type="number" name="id_producto[]" class="form-control" placeholder="ID del producto" required>
+          </div>
+          <div class="form-group flex-1">
+            <label>Cantidad</label>
+            <input type="number" name="cantidad[]" class="form-control" min="1" placeholder="Cantidad" required>
+          </div>
+          <div class="form-group flex-action">
+            <button type="button" class="btn-remove btn-danger" style="display: none;">Quitar</button>
+          </div>
+        </div>
+      </div>
 
-            <!-- Contenedor Dinámico de Productos -->
-            <div id="productos-container">
-                <div class="form-row producto-item align-items-center mb-2">
-                    <div class="form-group col-md-6 mb-0">
-                        <label>ID Producto</label>
-                        <input type="number" name="id_producto[]" class="form-control" placeholder="ID del producto" required>
-                    </div>
-                    <div class="form-group col-md-4 mb-0">
-                        <label>Cantidad</label>
-                        <input type="number" name="cantidad[]" class="form-control" min="1" placeholder="Cantidad" required>
-                    </div>
-                    <div class="form-group col-md-2 mb-0 d-flex align-items-end" style="height: 100%;">
-                        <button type="button" class="btn btn-danger btn-block btn-remove mt-4" style="display: none;">Quitar</button>
-                    </div>
-                </div>
-            </div>
+      <!-- Botón secundario para agregar renglones -->
+      <div class="dynamic-actions">
+        <button type="button" id="add-producto" class="btn-secondary">+ Agregar otro producto</button>
+      </div>
 
-            <div class="mt-3">
-                <button type="button" id="add-producto" class="btn btn-secondary btn-sm">+ Agregar otro producto</button>
-            </div>
+      <div class="form-divider"></div>
 
-            <hr class="my-4">
-
-            <!-- Botón de para envíar -->
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary px-4">Guardar Factura</button>
-            </div>
-        </form>
-    </div>
+      <!-- Botón de Guardado -->
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Guardar Factura</button>
+      </div>
+    </form>
+  </div>
 </main>
 
 <script>
@@ -63,21 +73,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('productos-container');
     const addBtn = document.getElementById('add-producto');
 
+    // Función para enlazar evento de eliminación
+    function attachRemoveEvent(button) {
+        button.addEventListener('click', function() {
+            const row = this.closest('.producto-item');
+            if (container.querySelectorAll('.producto-item').length > 1) {
+                row.remove();
+            }
+        });
+    }
+
     // Agregar nuevo renglón de producto
     addBtn.addEventListener('click', function() {
         const rows = container.querySelectorAll('.producto-item');
         const newRow = rows[0].cloneNode(true);
         
-        // Limpiar inputs del clon
+        // Limpiar valores de los inputs clonados
         newRow.querySelectorAll('input').forEach(input => input.value = '');
         
-        // Mostrar botón de quitar
+        // Activar el botón de quitar para la nueva fila
         const removeBtn = newRow.querySelector('.btn-remove');
-        removeBtn.style.display = 'block';
-        
-        removeBtn.addEventListener('click', function() {
-            newRow.remove();
-        });
+        removeBtn.style.display = 'inline-flex';
+        attachRemoveEvent(removeBtn);
 
         container.appendChild(newRow);
     });

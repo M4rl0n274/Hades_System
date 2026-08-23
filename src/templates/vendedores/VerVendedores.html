@@ -1,46 +1,66 @@
 {% extends 'navBar.html' %}
 
 {% block barraNavegacion %}
-<div class="container mt-4">
-  <h2>Lista de Productos</h2>
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Vendedores</h2>
+      <span class="badge-count">{{ vendedores|length }} registros</span>
+    </div>
 
+    <!-- Controles y Filtro de Ordenamiento -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="nombre-asc">Nombre (A - Z)</option>
+          <option value="nombre-desc">Nombre (Z - A)</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <!-- Tabla de Clientes -->
-  <table class="table table-striped">
-    <thead>
-      <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Nombre</th>      
-      <th scope="col">Apellido</th>      
-      <th scope="col">Documento de Identidad</th>
-      <th scope="col">Correo</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for vendedor in vendedores %}
-      <tr>
-        <th scope="row">{{ vendedor.id }}</th>
-        <td>{{ vendedor.nombre }}</td>     
-        <td>{{ vendedor.apellido }}</td>     
-        <td>{{ vendedor.documento_identidad }}</td>
-        <td>{{ vendedor.correo }}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="6" class="text-center">No se encontraron clientes.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="nombre">Nombre</th>
+            <th data-column="apellido">Apellido</th>
+            <th data-column="documento">Documento de Identidad</th>
+            <th data-column="correo">Correo</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for vendedor in vendedores %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">{{ vendedor.id }}</td>
+            <td data-label="Nombre">{{ vendedor.nombre }}</td>
+            <td data-label="Apellido">{{ vendedor.apellido }}</td>
+            <td data-label="Documento">{{ vendedor.documento_identidad }}</td>
+            <td data-label="Correo" class="text-secondary">{{ vendedor.correo }}</td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="5">No se encontraron vendedores en el sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-  <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
-  {% include '_paginacion.html' %}
-</div>
-{% endblock  %}
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
 
-
-
-
-
-
-
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+{% endblock %}
