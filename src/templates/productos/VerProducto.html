@@ -1,43 +1,70 @@
 {% extends 'navBar.html' %}
 
 {% block barraNavegacion %}
-<div class="container mt-4">
-  <h2>Lista de Productos</h2>
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Productos</h2>
+      <span class="badge-count">{{ productos|length }} registros</span>
+    </div>
 
+    <!-- Controles y Filtros (Solo Nombre e ID) -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="nombre-asc">Nombre (A - Z)</option>
+          <option value="nombre-desc">Nombre (Z - A)</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <!-- Tabla de Clientes -->
-  <table class="table table-striped">
-    <thead>
-      <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Nombre del Producto</th>      
-      <th scope="col">Descripción</th>      
-      <th scope="col">Categoría</th>
-      <th scope="col">Valor Unitario</th>
-      <th scope="col">Stock</th>
-      <th scope="col">Código</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for producto in productos %}
-      <tr>
-         <th scope="row">{{ producto.id }}</th>
-        <td>{{ producto.nombre_producto }}</td>     
-        <td>{{ producto.descripcion }}</td>     
-        <td>{{ producto.id_categoria }}</td>    
-        <td>{{ producto.valor_unitario }}</td>
-        <td>{{ producto.stock }}</td>
-        <td>{{ producto.codigo }}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="6" class="text-center">No se encontraron clientes.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="nombre">Nombre del Producto</th>
+            <th data-column="descripcion">Descripción</th>
+            <th data-column="categoria">Categoría</th>
+            <th data-column="valor">Valor Unitario</th>
+            <th data-column="stock">Stock</th>
+            <th data-column="codigo">Código</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for producto in productos %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">{{ producto.id }}</td>
+            <td data-label="Nombre">{{ producto.nombre_producto }}</td>
+            <td data-label="Descripción" class="text-secondary">{{ producto.descripcion }}</td>
+            <td data-label="Categoría">{{ producto.id_categoria }}</td>
+            <td data-label="Valor Unitario" class="font-weight-bold">${{ producto.valor_unitario }}</td>
+            <td data-label="Stock">{{ producto.stock }}</td>
+            <td data-label="Código">{{ producto.codigo }}</td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="7">No se encontraron productos en el sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-  <!-- INCLUSIÓN DE LA PAGINACIÓN REUTILIZABLE -->
-  {% include '_paginacion.html' %}
-</div>
-{% endblock  %}
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+{% endblock %}
