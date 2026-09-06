@@ -1,4 +1,4 @@
-    {% extends 'navBar.html' %}
+{% extends 'navBar.html' %}
 
 {% block barraNavegacion %}
 <main class="main-content">
@@ -41,6 +41,7 @@
             <th data-column="direccion">Dirección</th>
             <th data-column="telefono">Teléfono</th>
             <th data-column="fecha">Fecha de Nacimiento</th>
+            <th data-column="acciones">Acciones</th>
           </tr>
         </thead>
         <tbody id="table-body">
@@ -55,6 +56,16 @@
             <td data-label="Dirección">{{ cliente.direccion }}</td>
             <td data-label="Teléfono">{{ cliente.telefono }}</td>
             <td data-label="Fecha Nac.">{{ cliente.FechaDeNacimiento }}</td>
+            <td data-label="Acciones">
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('clientes.editar', id=cliente.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <!-- Botón de Eliminar -->
+              <form action="{{ url_for('clientes.eliminar', id=cliente.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar este cliente?');">Eliminar</button>
+              </form>
+            </td>
           </tr>
           {% else %}
           <tr class="empty-row">

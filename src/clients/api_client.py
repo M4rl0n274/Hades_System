@@ -1,3 +1,4 @@
+import requests
 import httpx
 from flask import current_app
 
@@ -75,6 +76,30 @@ class APIClient:
         r = httpx.post(self._url(path), json=json, headers=self.headers, timeout=10)
         return self._handle(r)
     
+    def put(self, endpoint, **kwargs):
+        """Envía una petición PUT a la API"""
+        url = f"{self.base_url}{endpoint}"
+        response = requests.put(url, headers=self.headers, **kwargs)
+        
+        # Validar si hubo un error en la respuesta HTTP
+        if response.status_code >= 400:
+            mensaje = response.json().get('message', 'Error al actualizar') if response.content else 'Error desconocido'
+            raise APIError(mensaje)
+            
+        # Retornar el JSON si la respuesta fue exitosa
+        return response.json() if response.content else {}
+
+    def delete(self, endpoint, **kwargs):
+        """Envía una petición DELETE a la API"""
+        url = f"{self.base_url}{endpoint}"
+        response = requests.delete(url, headers=self.headers, **kwargs)
+        
+        if response.status_code >= 400:
+            mensaje = response.json().get('message', 'Error al eliminar') if response.content else 'Error desconocido'
+            raise APIError(mensaje)
+            
+        return response.json() if response.content else {}
+    
     @staticmethod
     def as_list(data):
         """Normaliza respuesta a lista, sea directa o paginada."""
@@ -83,3 +108,5 @@ class APIClient:
         if isinstance(data, dict):
             return data.get('items') or data.get('data') or data.get('results') or []
         return []
+    
+    

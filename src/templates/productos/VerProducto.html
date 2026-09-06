@@ -37,7 +37,7 @@
             <th data-column="valor">Valor Unitario</th>
             <th data-column="stock">Stock</th>
             <th data-column="codigo">Código</th>
-          </tr>
+            <th data-column="acciones">Acciones</th>
         </thead>
         <tbody id="table-body">
           {% for producto in productos %}
@@ -49,6 +49,14 @@
             <td data-label="Valor Unitario" class="font-weight-bold">${{ producto.valor_unitario }}</td>
             <td data-label="Stock">{{ producto.stock }}</td>
             <td data-label="Código">{{ producto.codigo }}</td>
+            <td data-label="Acciones"> <!-- NUEVA COLUMNA CON BOTONES -->
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('productos.editar', id=producto.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <!-- Botón de Eliminar (usa un formulario para mayor seguridad con el método POST) -->
+              <form action="{{ url_for('productos.eliminar', id=producto.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
           </tr>
           {% else %}
           <tr class="empty-row">

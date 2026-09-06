@@ -69,8 +69,8 @@
                     <span class="nav-tooltip">Productos</span>
                     <!-- Submenú de Productos -->
                     <ul class="submenu">
-                        <li><a href="../productos">Ver Productos</a></li>
-                        <li><a href="../productos/nuevo">Nuevo Producto</a></li>
+                        <li><a href="{{ url_for('productos.index') }}">Ver Productos</a></li>
+                        <li><a href="{{ url_for('productos.nuevo') }}">Nuevo Producto</a></li>
                     </ul>
                 </li>
 
@@ -85,8 +85,8 @@
                     <span class="nav-tooltip">Clientes</span>
                     <!-- Submenú de Clientes -->
                     <ul class="submenu">
-                        <li><a href="../clientes">Ver Clientes</a></li>
-                        <li><a href="../clientes/nuevo">Nuevo Cliente</a></li>
+                        <li><a href="{{ url_for('clientes.index') }}">Ver Clientes</a></li>
+                        <li><a href="{{ url_for('clientes.nuevo') }}">Nuevo Cliente</a></li>
                     </ul>
                 </li>
 

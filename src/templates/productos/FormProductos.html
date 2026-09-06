@@ -10,16 +10,25 @@
   <!-- Tarjeta Contenedora del Formulario -->
   <div class="form-card">
     <form method="POST" class="custom-form">
-      
+
       <!-- Bloque 1: Categoría y Nombre (2 Columnas) -->
       <div class="form-grid grid-col-2">
+
         <div class="form-group">
           <label for="id_categoria">Categoría</label>
-          <input type="number" class="form-control" id="id_categoria" name="id_categoria" placeholder="Ingrese el número de la Categoría" required>
+          <select class="form-control" id="id_categoria" name="id_categoria" required>
+            <option value="" disabled selected>Seleccione una categoría...</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
+            {% endfor %}
+          </select>
         </div>
+
+
         <div class="form-group">
           <label for="nombre_producto">Nombre del Producto</label>
-          <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" placeholder="Ingrese el nombre del Producto" required>
+          <input type="text" class="form-control" id="nombre_producto" name="nombre_producto"
+            placeholder="Ingrese el nombre del Producto" required>
         </div>
       </div>
 
@@ -27,15 +36,18 @@
       <div class="form-grid grid-col-3">
         <div class="form-group">
           <label for="descripcion">Descripción</label>
-          <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Ingrese una descripción">
+          <input type="text" class="form-control" id="descripcion" name="descripcion"
+            placeholder="Ingrese una descripción">
         </div>
         <div class="form-group">
           <label for="valor_unitario">Costo Unitario</label>
-          <input type="number" step="0.01" class="form-control" id="valor_unitario" name="valor_unitario" placeholder="Ingrese el costo por unidad" required>
+          <input type="number" step="0.01" class="form-control" id="valor_unitario" name="valor_unitario"
+            placeholder="Ingrese el costo por unidad" required>
         </div>
         <div class="form-group">
           <label for="stock">Stock</label>
-          <input type="number" class="form-control" id="stock" name="stock" placeholder="Ingrese la cantidad en Stock" required>
+          <input type="number" class="form-control" id="stock" name="stock" placeholder="Ingrese la cantidad en Stock"
+            required>
         </div>
       </div>
 
@@ -43,7 +55,8 @@
       <div class="form-grid grid-col-1">
         <div class="form-group">
           <label for="codigo">Código</label>
-          <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Ingrese el código del producto" required>
+          <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Ingrese el código del producto"
+            required>
         </div>
       </div>
 
