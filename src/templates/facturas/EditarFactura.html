@@ -1,0 +1,91 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <div class="form-header-wrapper">
+    <h2>Editar Factura #{{ factura.id }}</h2>
+  </div>
+
+  <div class="form-card">
+    <!-- Formulario para editar la cabecera de la factura -->
+    <form method="POST" action="{{ url_for('facturas.editar', id=factura.id) }}" class="custom-form">
+      
+<!-- Seccion 1: Datos de la Venta -->
+      <div class="form-grid grid-col-3">
+        <div class="form-group">
+          <label for="id_cliente">Cliente</label>
+          <select class="form-control" id="id_cliente" name="id_cliente" required>
+            {% for c in clientes %}
+              <option value="{{ c.id }}" {% if c.id == factura.id_cliente %}selected{% endif %}>{{ c.nombre }} {{ c.apellido }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_vendedor">Vendedor</label>
+          <select class="form-control" id="id_vendedor" name="id_vendedor" required>
+            {% for v in vendedores %}
+              <option value="{{ v.id }}" {% if v.id == factura.id_vendedor %}selected{% endif %}>{{ v.nombre }} {{ v.apellido }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_usuario">Usuario</label>
+          <select class="form-control" id="id_usuario" name="id_usuario" required>
+            {% for u in usuarios %}
+              <option value="{{ u.id }}" {% if u.id == factura.id_usuario %}selected{% endif %}>{{ u.nombre }} {{ u.apellido }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-bottom: 2rem;">
+        <button type="submit" class="btn-primary">Actualizar Encabezado</button>
+        <a href="{{ url_for('facturas.index') }}" class="btn btn-secondary" style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Volver</a>
+      </div>
+    </form>
+
+    <div class="form-divider"></div>
+      
+    <!-- Sección 2: Detalle de Productos -->
+    <div class="dynamic-section-header" style="margin-top: 2rem; margin-bottom: 1rem;">
+      <h3>Productos de esta Factura</h3>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID Detalle</th>
+            <th>ID Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in factura.detalles %}
+          <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.producto_nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.precio_unitario }}</td>
+            <td>${{ item.subtotal_producto }}</td>
+            <td>
+              <!-- Botones provisionales para gestionar el detalle -->
+              <button class="btn btn-primary btn-sm">Editar</button>
+              <button class="btn btn-danger btn-sm">Quitar</button>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center;">No hay productos asociados a esta factura.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+{% endblock %}

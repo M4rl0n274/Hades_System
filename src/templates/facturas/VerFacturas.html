@@ -36,19 +36,28 @@
             <th data-column="subtotal">Subtotal</th>
             <th data-column="iva">IVA</th>
             <th data-column="total">Total</th>
+            <th data-column="acciones">Acciones</th>
           </tr>
         </thead>
         <tbody id="table-body">
           {% for factura in facturas %}
           <tr>
             <td data-label="ID" class="font-weight-bold">#{{ factura.id }}</td>
-            <td data-label="ID Cliente">{{ factura.id_cliente }}</td>
-            <td data-label="ID Vendedor">{{ factura.id_vendedor }}</td>
-            <td data-label="ID Usuario">{{ factura.id_usuario }}</td>
+            <td data-label="Cliente">{{ factura.cliente_nombre }}</td>
+            <td data-label="Vendedor">{{ factura.vendedor_nombre }}</td>
+            <td data-label="Usuario">{{ factura.usuario_nombre }}</td>
             <td data-label="Fecha Factura">{{ factura.fecha_factura }}</td>
             <td data-label="Subtotal" class="text-secondary">${{ factura.subtotal }}</td>
             <td data-label="IVA" class="text-secondary">${{ factura.iva }}</td>
             <td data-label="Total" class="font-weight-bold">${{ factura.total }}</td>
+            <td data-label="Acciones">
+              <a href="{{ url_for('facturas.editar', id=factura.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <form action="{{ url_for('facturas.eliminar', id=factura.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de anular esta factura?');">Eliminar</button>
+              </form>
+            </td>
           </tr>
           {% else %}
           <tr class="empty-row">

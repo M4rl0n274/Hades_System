@@ -90,5 +90,52 @@ def nuevo():
 
 
 
+#* RUTAS PARA EDITAR Y ELIMINAR VENDEDORES
+
+
+@vendedores_bp.route('/<int:id>/editar', methods=['GET', 'POST'])
+@login_required
+@rol_required('Administrador')
+def editar(id):
+    if request.method == 'POST':
+        nombre = request.form.get('nombre')
+        apellido = request.form.get('apellido')
+        documento_identidad = request.form.get('documento_identidad')
+        correo = request.form.get('correo')
+
+        try:
+            _client().put(f'/vendedores/{id}', json={ 
+                'nombre': nombre,
+                'apellido': apellido,
+                'documento_identidad': documento_identidad,
+                'correo': correo,
+            })  
+            
+            flash('Vendedor actualizado exitosamente', 'success')
+            return redirect(url_for('vendedores.index'))
+        except APIError as e:
+            flash(f'Error al actualizar el vendedor: {e.message}', 'danger')
+
+    # Método GET: Cargar los datos actuales del vendedor
+    try:
+        vendedor_actual = _client().get(f'/vendedores/{id}')
+    except APIError as e:
+        flash(f'Error al cargar el vendedor: {e.message}', 'danger')
+        return redirect(url_for('vendedores.index'))
+
+    return render_template('vendedores/EditarVendedor.html', vendedor=vendedor_actual)
+
+
+@vendedores_bp.route('/<int:id>/eliminar', methods=['POST'])
+@login_required
+@rol_required('Administrador')
+def eliminar(id):
+    try:
+        _client().delete(f'/vendedores/{id}')
+        flash('Vendedor eliminado exitosamente', 'success')
+    except APIError as e:
+        flash(f'Error al eliminar el vendedor: {e.message}', 'danger')
+        
+    return redirect(url_for('vendedores.index'))
 
 

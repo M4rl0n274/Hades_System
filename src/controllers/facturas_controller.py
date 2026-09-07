@@ -49,10 +49,6 @@ def index():
     return render_template('facturas/VerFacturas.html', facturas=facturas, meta=meta)
 
 
-
-
-
-
 @factura_bp.route('/nuevo', methods=['GET', 'POST'])
 @login_required
 @rol_required('Administrador')
@@ -100,4 +96,80 @@ def nuevo():
         except APIError as e:
             flash(f'Error al crear factura: {e.message}', 'danger')
 
-    return render_template('facturas/FormFacturas.html')
+
+# ========== CARGA DE DATOS PARA LOS MENÚS DESPLEGABLES ==========
+    try:
+        clientes = APIClient.as_list(_client().get('/clientes/', params={'per_page': 1000}))
+        vendedores = APIClient.as_list(_client().get('/vendedores/', params={'per_page': 1000}))
+        usuarios = APIClient.as_list(_client().get('/usuarios/', params={'per_page': 1000}))
+        productos = APIClient.as_list(_client().get('/productos/', params={'per_page': 1000}))
+    except APIError as e:
+        flash(f'Error al cargar datos para el formulario: {e.message}', 'danger')
+        clientes, vendedores, usuarios, productos = [], [], [], []
+
+    return render_template('facturas/FormFacturas.html', 
+                            clientes=clientes, 
+                            vendedores=vendedores, 
+                            usuarios=usuarios, 
+                            productos=productos)
+
+
+
+
+
+
+
+
+#* RUTAS  PARA EDITAR Y ELIMINAR FACTURAS
+
+
+@factura_bp.route('/<int:id>/editar', methods=['GET', 'POST'])
+@login_required
+@rol_required('Administrador')
+def editar(id):
+    if request.method == 'POST':
+        # Nota: La lógica de actualización de productos requiere enviar los detalles modificados.
+        id_cliente = int(request.form.get('id_cliente'))
+        id_vendedor = int(request.form.get('id_vendedor'))
+        id_usuario = int(request.form.get('id_usuario'))
+
+        try:
+            # Enviar actualización a la API (Requiere que crees el endpoint PUT en el backend)
+            _client().put(f'/factura/{id}', json={ 
+                'id_cliente': id_cliente,
+                'id_vendedor': id_vendedor,
+                'id_usuario': id_usuario
+            })  
+            flash('Factura actualizada exitosamente', 'success')
+            return redirect(url_for('facturas.index'))
+        except APIError as e:
+            flash(f'Error al actualizar la factura: {e.message}', 'danger')
+
+    try:
+        factura_actual = _client().get(f'/factura/{id}')
+        # Traer listas para los menús desplegables (pasamos per_page=1000 para cargar todos)
+        clientes = APIClient.as_list(_client().get('/clientes/', params={'per_page': 1000}))
+        vendedores = APIClient.as_list(_client().get('/vendedores/', params={'per_page': 1000}))
+        usuarios = APIClient.as_list(_client().get('/usuarios/', params={'per_page': 1000}))
+    except APIError as e:
+        flash(f'Error al cargar la factura: {e.message}', 'danger')
+        return redirect(url_for('facturas.index'))
+
+# Pasamos las listas al template
+    return render_template('facturas/EditarFactura.html', 
+                           factura=factura_actual,
+                           clientes=clientes,
+                           vendedores=vendedores,
+                           usuarios=usuarios)
+
+@factura_bp.route('/<int:id>/eliminar', methods=['POST'])
+@login_required
+@rol_required('Administrador')
+def eliminar(id):
+    try:
+        _client().delete(f'/factura/{id}')
+        flash('Factura eliminada exitosamente', 'success')
+    except APIError as e:
+        flash(f'Error al eliminar la factura: {e.message}', 'danger')
+        
+    return redirect(url_for('facturas.index'))

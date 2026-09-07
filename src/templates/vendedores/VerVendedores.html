@@ -35,6 +35,7 @@
             <th data-column="apellido">Apellido</th>
             <th data-column="documento">Documento de Identidad</th>
             <th data-column="correo">Correo</th>
+            <th data-column="acciones">Acciones</th>
           </tr>
         </thead>
         <tbody id="table-body">
@@ -45,6 +46,16 @@
             <td data-label="Apellido">{{ vendedor.apellido }}</td>
             <td data-label="Documento">{{ vendedor.documento_identidad }}</td>
             <td data-label="Correo" class="text-secondary">{{ vendedor.correo }}</td>
+             <td data-label="Acciones">
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('vendedores.editar', id=vendedor.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <!-- Botón de Eliminar -->
+              <form action="{{ url_for('vendedores.eliminar', id=vendedor.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar este vendedor?');">Eliminar</button>
+              </form>
+            </td>
           </tr>
           {% else %}
           <tr class="empty-row">
