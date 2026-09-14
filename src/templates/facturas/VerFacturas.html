@@ -52,7 +52,7 @@
             <td data-label="Total" class="font-weight-bold">{{ factura.total | cop }}</td>
             <td data-label="Acciones" class="action-buttons">
               <!-- Botón Descargar PDF -->
-              <button type="button" class="btn btn-secondary btn-sm btn-pdf" onclick="descargarPDF(event, {{ factura.id }})">
+              <button type="button" class="btn btn-secondary btn-sm btn-pdf" onclick="descargarPDF(event, '{{ factura.id }}' )">
                 <span class="material-symbols-rounded" style="font-size: 16px; vertical-align: middle;">picture_as_pdf</span> PDF
               </button>
 
@@ -283,7 +283,7 @@ async function descargarPDF(event, id) {
   logoImg.onload = function () {
     // addImage(imagen, formato, x, y, ancho, alto)
     // Posición X=150 para que quede a la derecha, Y=12
-    doc.addImage(logoImg, 'PNG', 150, 12, 45, 20);
+    doc.addImage(logoImg, 'PNG', 150, 12, 45, 45);
     generarCuerpoPDF(doc, data);
   };
 
