@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, jsonify
 from src.clients.api_client import APIClient, APIError
 from src.controllers.auth_controller import login_required, rol_required
 
@@ -116,7 +116,17 @@ def nuevo():
 
 
 
-
+#* para consultar los detalles completos de una factura específica
+@factura_bp.route('/<int:id>/json', methods=['GET'])
+@login_required
+@rol_required('Administrador', 'Vendedor')
+def obtener_json(id):
+    """Devuelve los datos completos de la factura y sus detalles para los modales y PDF."""
+    try:
+        factura_data = _client().get(f'/factura/{id}')
+        return jsonify(factura_data), 200
+    except APIError as e:
+        return jsonify({'message': e.message}), 400
 
 
 

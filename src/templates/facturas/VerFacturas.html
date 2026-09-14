@@ -29,9 +29,9 @@
         <thead>
           <tr>
             <th data-column="id">ID</th>
-            <th data-column="cliente">ID Cliente</th>
-            <th data-column="vendedor">ID Vendedor</th>
-            <th data-column="usuario">ID Usuario</th>
+            <th data-column="cliente">Cliente</th>
+            <th data-column="vendedor">Vendedor</th>
+            <th data-column="usuario">Usuario</th>
             <th data-column="fecha">Fecha Factura</th>
             <th data-column="subtotal">Subtotal</th>
             <th data-column="iva">IVA</th>
@@ -41,19 +41,26 @@
         </thead>
         <tbody id="table-body">
           {% for factura in facturas %}
-          <tr>
+          <tr class="clickable-row" data-id="{{ factura.id }}" style="cursor: pointer;">
             <td data-label="ID" class="font-weight-bold">#{{ factura.id }}</td>
             <td data-label="Cliente">{{ factura.cliente_nombre }}</td>
             <td data-label="Vendedor">{{ factura.vendedor_nombre }}</td>
             <td data-label="Usuario">{{ factura.usuario_nombre }}</td>
             <td data-label="Fecha Factura">{{ factura.fecha_factura }}</td>
-            <td data-label="Subtotal" class="text-secondary">${{ factura.subtotal }}</td>
-            <td data-label="IVA" class="text-secondary">${{ factura.iva }}</td>
-            <td data-label="Total" class="font-weight-bold">${{ factura.total }}</td>
-            <td data-label="Acciones">
-              <a href="{{ url_for('facturas.editar', id=factura.id) }}" class="btn btn-primary btn-sm">Editar</a>
+            <td data-label="Subtotal" class="text-secondary">{{ factura.subtotal | cop }}</td>
+            <td data-label="IVA" class="text-secondary">{{ factura.iva | cop }}</td>
+            <td data-label="Total" class="font-weight-bold">{{ factura.total | cop }}</td>
+            <td data-label="Acciones" class="action-buttons">
+              <!-- Botón Descargar PDF -->
+              <button type="button" class="btn btn-secondary btn-sm btn-pdf" onclick="descargarPDF(event, {{ factura.id }})">
+                <span class="material-symbols-rounded" style="font-size: 16px; vertical-align: middle;">picture_as_pdf</span> PDF
+              </button>
 
-              <form action="{{ url_for('facturas.eliminar', id=factura.id) }}" method="POST" style="display:inline;">
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('facturas.editar', id=factura.id) }}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">Editar</a>
+
+              <!-- Botón de Eliminar -->
+              <form action="{{ url_for('facturas.eliminar', id=factura.id) }}" method="POST" style="display:inline;" onclick="event.stopPropagation();">
                 <button type="submit" class="btn btn-danger btn-sm"
                   onclick="return confirm('¿Estás seguro de anular esta factura?');">Eliminar</button>
               </form>
@@ -61,7 +68,7 @@
           </tr>
           {% else %}
           <tr class="empty-row">
-            <td colspan="8">No se encontraron facturas registradas.</td>
+            <td colspan="9">No se encontraron facturas registradas.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -74,6 +81,279 @@
     </div>
   </div>
 </main>
+
+<!-- Modal para ver el Detalle Completo de la Factura -->
+<div id="modalFactura" class="custom-modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Factura #---</h3>
+      <span class="modal-close" onclick="cerrarModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <!-- Datos Generales -->
+      <div class="modal-grid">
+        <p><strong>Cliente:</strong> <span id="mCliente">---</span></p>
+        <p><strong>Vendedor:</strong> <span id="mVendedor">---</span></p>
+        <p><strong>Usuario / Registró:</strong> <span id="mUsuario">---</span></p>
+        <p><strong>Fecha:</strong> <span id="mFecha">---</span></p>
+      </div>
+
+      <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+      <!-- Tabla de Detalle de Productos -->
+      <h4>Productos</h4>
+      <div class="table-responsive">
+        <table class="custom-table" style="font-size: 0.9rem;">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>V. Unitario</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="mDetalleBody">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resumen Financiero -->
+      <div class="modal-totals" style="text-align: right; margin-top: 15px;">
+        <p><strong>Subtotal:</strong> <span id="mSubtotal">$0</span></p>
+        <p><strong>IVA (19%):</strong> <span id="mIva">$0</span></p>
+        <p style="font-size: 1.1rem; color: #2c3e50;"><strong>Total:</strong> <span id="mTotal">$0</span></p>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+      <button type="button" class="btn btn-secondary btn-sm" id="btnModalPdf">Descargar PDF</button>
+      <a href="#" class="btn btn-primary btn-sm" id="btnModalEditar">Editar</a>
+      <form id="formModalEliminar" method="POST" style="display:inline;">
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de anular esta factura?');">Eliminar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos CSS del Modal e Interfaz -->
+<style>
+.custom-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 15px;
+}
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.modal-close {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #888;
+}
+.modal-close:hover { color: #000; }
+.modal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+</style>
+
+<!-- Librerías de jsPDF & AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+// Formateador dinámico de Pesos Colombianos
+const formatCOP = (num) => {
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
+};
+
+// Cargar y mostrar datos en el Modal al hacer clic en una fila
+document.addEventListener('DOMContentLoaded', () => {
+  const rows = document.querySelectorAll('.clickable-row');
+  rows.forEach(row => {
+    row.addEventListener('click', (e) => {
+      // Evitar abrir modal si se hace clic dentro de un botón de acción
+      if (e.target.closest('.action-buttons')) return;
+
+      const facturaId = row.getAttribute('data-id');
+      fetchFactura(facturaId).then(data => {
+        if (!data) return;
+
+        document.getElementById('modalTitle').innerText = `Factura #${data.id}`;
+        document.getElementById('mCliente').innerText = data.cliente_nombre;
+        document.getElementById('mVendedor').innerText = data.vendedor_nombre;
+        document.getElementById('mUsuario').innerText = data.usuario_nombre;
+        document.getElementById('mFecha').innerText = data.fecha_factura;
+
+        // Limpiar y llenar tabla de productos
+        const tbody = document.getElementById('mDetalleBody');
+        tbody.innerHTML = '';
+        if (data.detalles && data.detalles.length > 0) {
+          data.detalles.forEach(item => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${item.producto_nombre}</td>
+                <td>${item.cantidad}</td>
+                <td>${formatCOP(item.precio_unitario)}</td>
+                <td>${formatCOP(item.subtotal_producto)}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center">Sin detalles registrados</td></tr>`;
+        }
+
+        document.getElementById('mSubtotal').innerText = formatCOP(data.subtotal);
+        document.getElementById('mIva').innerText = formatCOP(data.iva);
+        document.getElementById('mTotal').innerText = formatCOP(data.total);
+
+        // Configurar acciones del Modal
+        document.getElementById('btnModalPdf').onclick = (evt) => descargarPDF(evt, data.id);
+        document.getElementById('btnModalEditar').href = `/facturas/${data.id}/editar`;
+        document.getElementById('formModalEliminar').action = `/facturas/${data.id}/eliminar`;
+
+        // Mostrar Modal
+        document.getElementById('modalFactura').style.display = 'flex';
+      });
+    });
+  });
+});
+
+function cerrarModal() {
+  document.getElementById('modalFactura').style.display = 'none';
+}
+
+// Petición AJAX al endpoint JSON
+async function fetchFactura(id) {
+  try {
+    const res = await fetch(`/facturas/${id}/json`);
+    if (!res.ok) throw new Error('Error al obtener datos');
+    return await res.json();
+  } catch (err) {
+    alert('No se pudieron obtener los detalles de la factura.');
+    return null;
+  }
+}
+
+// Función para Generar y Descargar el PDF con Logo y Nombre Personalizado
+async function descargarPDF(event, id) {
+  if (event) event.stopPropagation();
+
+  const data = await fetchFactura(id);
+  if (!data) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // 1. CARGAR Y AÑADIR LOGO EN LA ESQUINA SUPERIOR DERECHA
+  // Asegúrate de colocar tu imagen en static/img/logo.png (o la ruta correspondiente)
+  const logoImg = new Image();
+  logoImg.src = "{{ url_for('static', filename='img/Logos_HS/logo_hs.png') }}";
+
+  logoImg.onload = function () {
+    // addImage(imagen, formato, x, y, ancho, alto)
+    // Posición X=150 para que quede a la derecha, Y=12
+    doc.addImage(logoImg, 'PNG', 150, 12, 45, 20);
+    generarCuerpoPDF(doc, data);
+  };
+
+  logoImg.onerror = function () {
+    // Si la imagen no se encuentra o falla la carga, genera el PDF sin detener la ejecución
+    generarCuerpoPDF(doc, data);
+  };
+}
+
+function generarCuerpoPDF(doc, data) {
+  // 2. NOMBRE DE LA EMPRESA Y ENCABEZADO (EDITABLE AQUÍ)
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text('Hades System', 14, 20); // <-- Modifica el nombre aquí
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text('NIT: 900.123.456-7', 14, 26); // <-- Datos opcionales de la empresa
+  doc.text('Dirección: Calle 100 #11-20, Bogotá', 14, 30);
+  doc.text('Teléfono: +57 (601) 123 4567', 14, 34);
+
+  // Línea divisora
+  doc.setDrawColor(200, 200, 200);
+  doc.line(14, 38, 196, 38);
+
+  // 3. INFORMACIÓN DE LA FACTURA
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text(`FACTURA DE VENTA #${data.id}`, 14, 46);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Fecha: ${data.fecha_factura}`, 14, 52);
+  doc.text(`Cliente: ${data.cliente_nombre}`, 14, 58);
+  doc.text(`Vendedor: ${data.vendedor_nombre}`, 14, 64);
+  doc.text(`Registrado por: ${data.usuario_nombre}`, 14, 70);
+
+  // 4. TABLA DE DETALLES DE PRODUCTOS
+  const tableRows = [];
+  if (data.detalles) {
+    data.detalles.forEach(d => {
+      tableRows.push([
+        d.producto_nombre,
+        d.cantidad,
+        formatCOP(d.precio_unitario),
+        formatCOP(d.subtotal_producto)
+      ]);
+    });
+  }
+
+  doc.autoTable({
+    startY: 76,
+    head: [['Producto', 'Cantidad', 'Valor Unitario', 'Subtotal']],
+    body: tableRows,
+    theme: 'striped',
+    headStyles: { fillStyle: [41, 128, 185] }
+  });
+
+  // 5. RESUMEN DE TOTALES
+  const finalY = doc.lastAutoTable.finalY + 10;
+  doc.text(`Subtotal: ${formatCOP(data.subtotal)}`, 140, finalY);
+  doc.text(`IVA (19%): ${formatCOP(data.iva)}`, 140, finalY + 6);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Total: ${formatCOP(data.total)}`, 140, finalY + 14);
+
+  // Guardar documento generado
+  doc.save(`Factura_${data.id}.pdf`);
+}
+</script>
 
 <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
 {% endblock %}

@@ -49,7 +49,7 @@ window.addEventListener("resize", () => {
 });
 
 // Modificación 2: Lógica de interacción para los Desplegables solicitados
-const targetLabels = ["productos", "clientes", "vendedores", "facturas", "detalle factura"];
+const targetLabels = ["productos", "clientes", "vendedores", "facturas", "detalle factura", "categorías"];
 const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
 
 navItems.forEach(item => {

@@ -106,45 +106,40 @@
                 </li>
 
                 <li class="nav-item">
-
                     <a href="#" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">
                             receipt_long
                         </span>
-                        <span class="nav-label">Facturas </span>
+                        <span class="nav-label">Facturas</span>
                     </a>
-                    <span class="nav-tooltip">Facturas </span>
+                    <span class="nav-tooltip">Facturas</span>
                     <!-- Submenú de Facturas -->
                     <ul class="submenu">
                         <li><a href="{{ url_for('facturas.index') }}">Historial Facturas</a></li>
                         <li><a href="{{ url_for('facturas.nuevo') }}">Nueva Factura</a></li>
                     </ul>
                 </li>
-
-                <!-- <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">
-                            list_alt
-                        </span>
-                        <span class="nav-label">Detalle Factura</span>
-                    </a>
-                    <span class="nav-tooltip">Detalle Factura</span>
-                    
-                    <ul class="submenu">
-                        <li><a href="#">Consultar Detalles</a></li>
-                        <li><a href="#">Reportes</a></li>
-                    </ul>
-                </li> -->
-
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">
-                            settings
+                            receipt_long
                         </span>
-                        <span class="nav-label">Configuración</span>
+                        <span class="nav-label">Categorías</span>
                     </a>
-                    <span class="nav-tooltip">Configuración</span>
+                    <span class="nav-tooltip">Categorías</span>
+                    <!-- Submenú de Facturas -->
+                    <ul class="submenu">
+                        <li><a href="{{ url_for('categorias.index') }}">ver Categoría</a></li>
+                        <li><a href="{{ url_for('categorias.nuevo') }}">Nueva Categoría</a></li>
+                    </ul>
                 </li>
+
+
+
+
+
+
+
             </ul>
             <!--! Secondary bottom nav-->
             <!-- <ul class="nav-list secondary-nav">
@@ -174,21 +169,21 @@
                 </li>
 
                 <!-- Aquí va el botón de logout que arreglamos antes -->
-                
-                
+
+
                 <li class="nav-item">
                     <form action="{{ url_for('auth.logout') }}" method="POST" id="form-logout">
-                    <button type="submit" class="nav-link logout-btn">
-                        <span class="nav-icon material-symbols-rounded">
-                            logout
-                        </span>
-                        <span class="nav-label">Cerrar Sesión</span>
-                    </button>
-                </form>
-                <span class="nav-tooltip">Cerrar Sesión</span>
-            </li>
-        </ul>
-    
+                        <button type="submit" class="nav-link logout-btn">
+                            <span class="nav-icon material-symbols-rounded">
+                                logout
+                            </span>
+                            <span class="nav-label">Cerrar Sesión</span>
+                        </button>
+                    </form>
+                    <span class="nav-tooltip">Cerrar Sesión</span>
+                </li>
+            </ul>
+
 
 
         </nav>
@@ -199,32 +194,34 @@
     {% endblock %}
 
 
-    
-<!--* Modal que consume flash para mostrar mensajes cuando se crea, elimina o edita-->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
+
+    <!--* Modal que consume flash para mostrar mensajes cuando se crea, elimina o edita-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
     <div class="flash-modal-overlay" id="flashModalOverlay">
-      <div class="flash-modal" role="dialog" aria-modal="true">
-        <button type="button" class="flash-modal-close" id="flashModalClose" aria-label="Cerrar">&times;</button>
-        <div class="flash-modal-body">
-          {% for category, message in messages %}
-            <div class="flash-alert flash-alert-{{ category }}">
-              <span class="flash-alert-icon">
-                {% if category == 'success' %}✓{% elif category == 'danger' %}✕{% elif category == 'warning' %}!{% else %}i{% endif %}
-              </span>
-              <span class="flash-alert-text">{{ message }}</span>
+        <div class="flash-modal" role="dialog" aria-modal="true">
+            <button type="button" class="flash-modal-close" id="flashModalClose" aria-label="Cerrar">&times;</button>
+            <div class="flash-modal-body">
+                {% for category, message in messages %}
+                <div class="flash-alert flash-alert-{{ category }}">
+                    <span class="flash-alert-icon">
+                        {% if category == 'success' %}✓{% elif category == 'danger' %}✕{% elif category == 'warning'
+                        %}!{% else %}i{% endif %}
+                    </span>
+                    <span class="flash-alert-text">{{ message }}</span>
+                </div>
+                {% endfor %}
             </div>
-          {% endfor %}
+            <div class="flash-modal-footer">
+                <button type="button" class="flash-modal-btn" id="flashModalBtnCerrar">Cerrar</button>
+            </div>
         </div>
-        <div class="flash-modal-footer">
-          <button type="button" class="flash-modal-btn" id="flashModalBtnCerrar">Cerrar</button>
-        </div>
-      </div>
     </div>
-  {% endif %}
-{% endwith %}
+    {% endif %}
+    {% endwith %}
 
 </body>
-    <script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
-    <script src="{{ url_for('static', filename='js/modal_messages.js') }}?v=99"></script>
+<script src="{{ url_for('static', filename='js/navbar.js') }}?v=99"></script>
+<script src="{{ url_for('static', filename='js/modal_messages.js') }}?v=99"></script>
+
 </html>

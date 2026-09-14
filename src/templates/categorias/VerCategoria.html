@@ -1,0 +1,71 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Categorías</h2>
+      <span class="badge-count">{{ categorias|length }} registros</span>
+    </div>
+
+    <!-- Controles y Filtros -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="nombre-asc">Nombre (A - Z)</option>
+          <option value="nombre-desc">Nombre (Z - A)</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="nombre">Nombre de la Categoría</th>
+            <th data-column="acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for categoria in categorias %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">{{ categoria.id }}</td>
+            <td data-label="Nombre">{{ categoria.nombre_categoria or categoria.nombre }}</td>
+            <td data-label="Acciones">
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('categorias.editar', id=categoria.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <!-- Botón de Eliminar -->
+              <form action="{{ url_for('categorias.eliminar', id=categoria.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar esta categoría?');">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="3">No se encontraron categorías en el sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+{% endblock %}

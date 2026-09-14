@@ -12,6 +12,7 @@ def create_app(config_name='default'):
     from src.controllers.clientes_controller  import cliente_bp
     from src.controllers.home_controller      import home_bp
     from src.controllers.auth_controller      import auth_bp
+    from src.controllers.categorias_controller      import categoria_bp
     #* registrar Ruta
     app.register_blueprint(factura_bp,   url_prefix='/facturas')
     app.register_blueprint(vendedores_bp,   url_prefix='/vendedores')
@@ -19,5 +20,6 @@ def create_app(config_name='default'):
     app.register_blueprint(cliente_bp,   url_prefix='/clientes')
     app.register_blueprint(home_bp,      url_prefix='/')
     app.register_blueprint(auth_bp,      url_prefix='/auth')
+    app.register_blueprint(categoria_bp,      url_prefix='/categorias')
 
     return app

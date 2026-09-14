@@ -74,7 +74,7 @@ def index():
 
 @cliente_bp.route('/nuevo', methods=['GET', 'POST'])
 @login_required
-@rol_required('Administrador', 'Vendedor')
+@rol_required('Administrador')
 def nuevo():
     if request.method == 'POST':
         nombre = request.form.get('nombre')
@@ -175,12 +175,7 @@ def editar(id):
 
 
 
-
-
-
-
-
-
+    
 
 @cliente_bp.route('/<int:id>/eliminar', methods=['POST'])
 @login_required

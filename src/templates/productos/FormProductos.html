@@ -24,7 +24,6 @@
           </select>
         </div>
 
-
         <div class="form-group">
           <label for="nombre_producto">Nombre del Producto</label>
           <input type="text" class="form-control" id="nombre_producto" name="nombre_producto"
@@ -39,11 +38,24 @@
           <input type="text" class="form-control" id="descripcion" name="descripcion"
             placeholder="Ingrese una descripción">
         </div>
+
+        <!-- Campo de Costo Unitario con Símbolo de Pesos e Ingreso de Decimales -->
         <div class="form-group">
-          <label for="valor_unitario">Costo Unitario</label>
-          <input type="number" step="0.01" class="form-control" id="valor_unitario" name="valor_unitario"
-            placeholder="Ingrese el costo por unidad" required>
+          <label for="valor_unitario_display">Costo Unitario (COP)</label>
+          <div style="position: relative; display: flex; align-items: center; width: 100%;">
+            <span
+              style="position: absolute; left: 12px; font-weight: bold; color: var(--text-muted, #6c757d); pointer-events: none; z-index: 2;">$</span>
+            <input type="text" class="form-control" id="valor_unitario_display" placeholder="0,00"
+              style="padding-left: 28px !important; width: 100%;" required autocomplete="off">
+          </div>
+          <!-- Campo oculto que enviará el float (con punto decimal) al backend de Flask -->
+          <input type="hidden" id="valor_unitario" name="valor_unitario" required>
         </div>
+
+
+
+
+
         <div class="form-group">
           <label for="stock">Stock</label>
           <input type="number" class="form-control" id="stock" name="stock" placeholder="Ingrese la cantidad en Stock"
@@ -68,4 +80,56 @@
     </form>
   </div>
 </main>
+
+<!-- Script para darle formato de Pesos Colombianos en tiempo real -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const displayInput = document.getElementById('valor_unitario_display');
+  const hiddenInput = document.getElementById('valor_unitario');
+
+  if (displayInput && hiddenInput) {
+    displayInput.addEventListener('input', (e) => {
+      // 1. Quitar cualquier carácter que no sea número ni coma
+      let value = e.target.value.replace(/[^0-9,]/g, '');
+
+      // 2. Permitir solo una coma para los decimales
+      const parts = value.split(',');
+      if (parts.length > 2) {
+        value = parts[0] + ',' + parts.slice(1).join('');
+      }
+
+      let enteros = parts[0];
+      let decimales = parts[1] !== undefined ? parts[1].slice(0, 2) : null; // Máximo 2 decimales
+
+      // 3. Formatear la parte entera con puntos de miles
+      if (enteros) {
+        enteros = parseInt(enteros, 10).toLocaleString('es-CO');
+      }
+
+      // 4. Construir la cadena visual con la coma
+      let formattedValue = enteros;
+      if (decimales !== null) {
+        formattedValue += ',' + decimales;
+      }
+
+      displayInput.value = formattedValue;
+
+      // 5. Guardar el valor apto para la base de datos (con punto decimal ej: 1000000.00)
+      let cleanEnteros = parts[0] || '0';
+      let cleanDecimales = decimales !== null ? decimales : '00';
+      hiddenInput.value = `${cleanEnteros}.${cleanDecimales}`;
+    });
+
+    // Formatear a dos decimales al perder el foco (blur)
+    displayInput.addEventListener('blur', () => {
+      if (displayInput.value && !displayInput.value.includes(',')) {
+        displayInput.value += ',00';
+        if (hiddenInput.value) {
+          hiddenInput.value = parseFloat(hiddenInput.value).toFixed(2);
+        }
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

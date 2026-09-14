@@ -46,7 +46,7 @@
             <td data-label="Nombre">{{ producto.nombre_producto }}</td>
             <td data-label="Descripción" class="text-secondary">{{ producto.descripcion }}</td>
             <td data-label="Categoría">{{ producto.id_categoria }}</td>
-            <td data-label="Valor Unitario" class="font-weight-bold">${{ producto.valor_unitario }}</td>
+            <td data-label="Valor Unitario" class="font-weight-bold">{{ producto.valor_unitario | cop }}</td>
             <td data-label="Stock">{{ producto.stock }}</td>
             <td data-label="Código">{{ producto.codigo }}</td>
             <td data-label="Acciones"> <!-- NUEVA COLUMNA CON BOTONES -->

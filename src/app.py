@@ -18,6 +18,26 @@ app = create_app('development')
 if __name__ == '__main__':
     print('✓ Frontend corriendo en http://localhost:5001')
     app.run(debug=True, port=5001)
+    
+    
+    
+    
+    
+    
+#* Filtro Personalizado de Jinja2 para Formato de Moneda (COP)
+# ---------------------------------------------------------------------------
+@app.template_filter('cop')
+def format_cop(valor):
+    """Formatea un número a pesos colombianos con 2 decimales y coma (ej: $1.000.000,00)."""
+    try:
+        val = float(valor)
+        # Formato estándar con comas para miles y puntos para decimales
+        formatted = f"{val:,.2f}"
+        # Intercambiamos separadores: comas -> puntos y puntos -> comas
+        formatted = formatted.replace(",", "TEMP").replace(".", ",").replace("TEMP", ".")
+        return f"${formatted}"
+    except (ValueError, TypeError):
+        return "$0,00"
 
 # #! Rutas Clientes
 

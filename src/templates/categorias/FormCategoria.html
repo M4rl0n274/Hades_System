@@ -1,0 +1,32 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Cabecera Reutilizable -->
+  <div class="form-header-wrapper">
+    <h2>Registro de Categoría</h2>
+  </div>
+
+  <!-- Tarjeta Contenedora del Formulario -->
+  <div class="form-card">
+    <form method="POST" class="custom-form">
+
+      <div class="form-grid grid-col-1">
+        <div class="form-group">
+          <label for="nombre_categoria">Nombre de la Categoría</label>
+          <input type="text" class="form-control" id="nombre_categoria" name="nombre_categoria"
+            placeholder="Ingrese el nombre de la categoría" required autofocus>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="form-actions" style="display: flex; gap: 10px; align-items: center;">
+        <button type="submit" class="btn-primary">Guardar Categoría</button>
+        <a href="{{ url_for('categorias.index') }}" class="btn btn-secondary"
+          style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+</main>
+{% endblock %}

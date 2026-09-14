@@ -56,7 +56,7 @@ def index():
 
 @producto_bp.route('/nuevo', methods=['GET', 'POST'])
 @login_required
-@rol_required('Administrador', 'Vendedor')
+@rol_required('Administrador')
 def nuevo():
     if request.method == 'POST':
         id_categoria = request.form.get('id_categoria', type=int)
@@ -97,15 +97,6 @@ def nuevo():
         categorias = [] # Si hay error, envía una lista vacía
         
     return render_template('productos/FormProductos.html', categorias=categorias)
-
-
-
-
-
-
-
-
-
 
 
 

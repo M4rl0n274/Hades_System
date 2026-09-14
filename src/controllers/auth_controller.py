@@ -121,13 +121,17 @@ def registro():
 
     if request.method == 'POST':
         payload = {
-            'nombre':   request.form.get('nombre', '').strip(),
-            'correo':    request.form.get('correo', '').strip(),
+            'nombre': request.form.get('nombre', '').strip(),
+            'apellido': request.form.get('apellido', '').strip(),
+            'documento_identidad': request.form.get('documento_identidad', '').strip(),
+            'correo': request.form.get('correo', '').strip(),
             'password': request.form.get('password', ''),
+            'rol': 'Usuario'  # Rol asignado automáticamente por seguridad
         }
         confirmacion = request.form.get('password_confirmacion', '')
 
-        if not all(payload.values()):
+        # Validamos que todos los campos del payload tengan valor
+        if not all([payload['nombre'], payload['apellido'], payload['documento_identidad'], payload['correo'], payload['password']]):
             flash('Todos los campos son obligatorios.', 'danger')
             return render_template('auth/registro.html', datos=payload)
 
@@ -137,7 +141,7 @@ def registro():
 
         try:
             APIClient().post('/auth/register', json=payload)
-            flash('Cuenta creada. Ya puedes iniciar sesión.', 'success')
+            flash('Cuenta creada exitosamente. Ya puedes iniciar sesión.', 'success')
             return redirect(url_for('auth.login'))
         except APIError as e:
             flash(e.message, 'danger')
