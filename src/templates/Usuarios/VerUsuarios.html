@@ -1,0 +1,81 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Cabecera de la sección -->
+  <div class="table-header-wrapper">
+    <div class="header-title">
+      <h2>Lista de Usuarios</h2>
+      <span class="badge-count">{{ usuarios|length }} registros</span>
+    </div>
+
+    <!-- Controles y Filtro de Ordenamiento -->
+    <div class="table-controls">
+      <div class="sort-wrapper">
+        <label for="sortSelect">Ordenar por:</label>
+        <select id="sortSelect" class="custom-select">
+          <option value="default">Por defecto</option>
+          <option value="nombre-asc">Nombre (A - Z)</option>
+          <option value="nombre-desc">Nombre (Z - A)</option>
+          <option value="apellido-asc">Apellido (A - Z)</option>
+          <option value="apellido-desc">Apellido (Z - A)</option>
+          <option value="id-asc">ID (Menor a Mayor)</option>
+          <option value="id-desc">ID (Mayor a Menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Responsivo de la Tabla -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="custom-table" id="data-table">
+        <thead>
+          <tr>
+            <th data-column="id">ID</th>
+            <th data-column="nombre">Nombre</th>
+            <th data-column="apellido">Apellido</th>
+            <th data-column="documento">Documento</th>
+            <th data-column="correo">Correo Electrónico</th>
+            <th data-column="rol">Rol</th>
+            <th data-column="acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for usuario in usuarios %}
+          <tr>
+            <td data-label="ID" class="font-weight-bold">#{{ usuario.id }}</td>
+            <td data-label="Nombre">{{ usuario.nombre }}</td>
+            <td data-label="Apellido">{{ usuario.apellido }}</td>
+            <td data-label="Documento">{{ usuario.documento_identidad }}</td>
+            <td data-label="Correo" class="text-secondary">{{ usuario.correo }}</td>
+            <td data-label="Rol"><span class="badge font-weight-bold">{{ usuario.rol }}</span></td>
+            <td data-label="Acciones">
+              <!-- Botón de Editar -->
+              <a href="{{ url_for('usuarios.editar', id=usuario.id) }}" class="btn btn-primary btn-sm">Editar</a>
+
+              <!-- Botón de Eliminar -->
+              <form action="{{ url_for('usuarios.eliminar', id=usuario.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('¿Estás seguro de eliminar este usuario?');">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr class="empty-row">
+            <td colspan="7">No se encontraron usuarios registrados en el sistema.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación integrada -->
+    <div class="table-footer">
+      {% include '_paginacion.html' %}
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+{% endblock %}

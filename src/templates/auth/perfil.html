@@ -3,74 +3,309 @@
 {% block title %}Mi Perfil — FacturApp{% endblock %}
 
 {% block barraNavegacion %}
-<div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
+<main class="main-content">
+  <div class="profile-container">
 
-      <!-- Alertas en caso de que ocurra un APIError -->
-      {% with mensajes = get_flashed_messages(with_categories=true) %}
-        {% for categoria, mensaje in mensajes %}
-          <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3" role="alert">
-            {{ mensaje }}
-            <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
-          </div>
-        {% endfor %}
-      {% endwith %}
+    <!-- Mensajes Flotantes / Alertas -->
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}
+        <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3" role="alert">
+          {{ mensaje }}
+          <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
 
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+    <!-- Tarjeta Principal de Perfil -->
+    <div class="profile-card">
+      
+      <!-- Banner de Cabecera con Avatar -->
+      <div class="profile-header">
+        <div class="avatar-wrapper">
+          <span class="material-symbols-rounded">account_circle</span>
+        </div>
+        <h2 class="profile-name">
+          {{ usuario.get('nombre', '') }} {{ usuario.get('apellido', '') }}
+        </h2>
+        <span class="role-badge">
+          <span class="material-symbols-rounded fs-6">verified</span>
+          {{ usuario.get('rol', 'Cliente') }}
+        </span>
+      </div>
 
-          <!-- Encabezado: Avatar, Nombre y Rol -->
-          <div class="text-center mb-4">
-            <span class="material-symbols-rounded text-primary" style="font-size: 64px;">
-              account_circle
-            </span>
-            <h1 class="h4 mb-1 mt-2">
-              {{ usuario.get('nombre', '') }} {{ usuario.get('apellido', '') }}
-            </h1>
-            <span class="badge bg-primary text-capitalize px-3 py-2">
-              {{ usuario.get('rol', 'Usuario') }}
-            </span>
-          </div>
+      <!-- Cuerpo del Perfil: Detalles en Grilla -->
+      <div class="profile-body">
+        <h3 class="section-title">
+          <span class="material-symbols-rounded">badge</span> Información Personal
+        </h3>
 
-          <hr class="my-4">
-
-          <!-- Detalles del usuario enviados por /auth/me -->
-          <div class="list-group list-group-flush">
-            
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
-              <span class="text-muted small d-flex align-items-center gap-2">
-                <span class="material-symbols-rounded fs-5">mail</span> Correo electrónico
-              </span>
-              <span class="fw-semibold">{{ usuario.get('correo', 'N/A') }}</span>
+        <div class="info-grid">
+          
+          <!-- Nombre Completo -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">person</span></div>
+            <div class="info-content">
+              <span class="info-label">Nombre Completo</span>
+              <span class="info-value">{{ usuario.get('nombre', 'N/A') }} {{ usuario.get('apellido', '') }}</span>
             </div>
-
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
-              <span class="text-muted small d-flex align-items-center gap-2">
-                <span class="material-symbols-rounded fs-5">badge</span> Documento de Identidad
-              </span>
-              <span class="fw-semibold">{{ usuario.get('documento_identidad', 'N/A') }}</span>
-            </div>
-
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
-              <span class="text-muted small d-flex align-items-center gap-2">
-                <span class="material-symbols-rounded fs-5">admin_panel_settings</span> Rol en el Sistema
-              </span>
-              <span class="fw-semibold text-capitalize">{{ usuario.get('rol', 'N/A') }}</span>
-            </div>
-
           </div>
 
-          <div class="mt-4 pt-2">
-            <a href="{{ url_for('home.index') }}" class="btn btn-outline-secondary w-100">
-              Volver al inicio
-            </a>
+          <!-- Documento de Identidad -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">id_card</span></div>
+            <div class="info-content">
+              <span class="info-label">Documento de Identidad</span>
+              <span class="info-value">{{ usuario.get('documentoIdentidad', usuario.get('documento_identidad', 'N/A')) }}</span>
+            </div>
+          </div>
+
+          <!-- Correo Electrónico -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">mail</span></div>
+            <div class="info-content">
+              <span class="info-label">Correo Electrónico</span>
+              <span class="info-value">{{ usuario.get('correo', 'N/A') }}</span>
+            </div>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">call</span></div>
+            <div class="info-content">
+              <span class="info-label">Teléfono de Contacto</span>
+              <span class="info-value">{{ usuario.get('telefono', 'N/A') }}</span>
+            </div>
+          </div>
+
+          <!-- Dirección -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">home_pin</span></div>
+            <div class="info-content">
+              <span class="info-label">Dirección de Residencia</span>
+              <span class="info-value">{{ usuario.get('direccion', 'N/A') }}</span>
+            </div>
+          </div>
+
+          <!-- Edad -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">cake</span></div>
+            <div class="info-content">
+              <span class="info-label">Edad</span>
+              <span class="info-value">
+                {% if usuario.get('edad') %}{{ usuario.get('edad') }} años{% else %}N/A{% endif %}
+              </span>
+            </div>
+          </div>
+
+          <!-- Fecha de Nacimiento -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">calendar_month</span></div>
+            <div class="info-content">
+              <span class="info-label">Fecha de Nacimiento</span>
+              <span class="info-value">
+                {% if usuario.get('FechaDeNacimiento') %}
+                  {{ usuario.get('FechaDeNacimiento')[:10] }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </span>
+            </div>
+          </div>
+
+          <!-- Rol en el Sistema -->
+          <div class="info-item">
+            <div class="info-icon"><span class="material-symbols-rounded">admin_panel_settings</span></div>
+            <div class="info-content">
+              <span class="info-label">Rol Asignado</span>
+              <span class="info-value">{{ usuario.get('rol', 'Cliente') }}</span>
+            </div>
           </div>
 
         </div>
+
+        <!-- Acciones del Perfil -->
+        <div class="profile-actions">
+          {% if usuario.get('rol') == 'Cliente' %}
+            <a href="{{ url_for('clientes.mis_facturas') }}" class="btn-primary-action">
+              <span class="material-symbols-rounded">receipt_long</span> Mis Facturas
+            </a>
+          {% else %}
+            <a href="{{ url_for('home.index') }}" class="btn-primary-action">
+              <span class="material-symbols-rounded">dashboard</span> Ir al Dashboard
+            </a>
+          {% endif %}
+        </div>
+
       </div>
 
     </div>
+
   </div>
-</div>
+</main>
+
+<!-- Estilos integrados a la paleta corporativa (#151A2D, #2563EB, #F1FAFF) -->
+<style>
+.profile-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(21, 26, 45, 0.08);
+  border: 1px solid rgba(21, 26, 45, 0.08);
+  overflow: hidden;
+}
+
+/* Header del Perfil */
+.profile-header {
+  background-color: rgb(21, 26, 45);
+  color: #ffffff;
+  padding: 2.5rem 1.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-wrapper .material-symbols-rounded {
+  font-size: 80px;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.role-badge {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Cuerpo e Información */
+.profile-body {
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: #151A2D;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  border-bottom: 2px solid #F1FAFF;
+  padding-bottom: 0.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F1FAFF;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #CBE4FF;
+}
+
+.info-icon {
+  width: 42px;
+  height: 42px;
+  background: #ffffff;
+  color: #2563EB;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+}
+
+.info-icon .material-symbols-rounded {
+  font-size: 22px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.info-label {
+  font-size: 0.78rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 0.92rem;
+  color: #151A2D;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Acciones */
+.profile-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #151A2D;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-action:hover {
+  background-color: #2563EB;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Responsive Móvil */
+@media (max-width: 640px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-body {
+    padding: 1.25rem;
+  }
+
+  .btn-primary-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
 {% endblock %}

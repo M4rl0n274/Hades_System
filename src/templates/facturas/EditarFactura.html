@@ -7,10 +7,9 @@
   </div>
 
   <div class="form-card">
-    <!-- Formulario para editar la cabecera de la factura -->
+    <!-- Sección 1: Formulario para editar la cabecera de la factura -->
     <form method="POST" action="{{ url_for('facturas.editar', id=factura.id) }}" class="custom-form">
       
-<!-- Seccion 1: Datos de la Venta -->
       <div class="form-grid grid-col-3">
         <div class="form-group">
           <label for="id_cliente">Cliente</label>
@@ -46,7 +45,7 @@
 
     <div class="form-divider"></div>
       
-    <!-- Sección 2: Detalle de Productos -->
+    <!-- Sección 2: Detalle de Productos Editable -->
     <div class="dynamic-section-header" style="margin-top: 2rem; margin-bottom: 1rem;">
       <h3>Productos de esta Factura</h3>
     </div>
@@ -56,7 +55,7 @@
         <thead>
           <tr>
             <th>ID Detalle</th>
-            <th>ID Producto</th>
+            <th>Producto</th>
             <th>Cantidad</th>
             <th>Precio Unitario</th>
             <th>Subtotal</th>
@@ -66,16 +65,30 @@
         <tbody>
           {% for item in factura.detalles %}
           <tr>
-            <td>{{ item.id }}</td>
+            <td>#{{ item.id }}</td>
             <td>{{ item.producto_nombre }}</td>
-            <td>{{ item.cantidad }}</td>
-            <td>${{ item.precio_unitario }}</td>
-            <td>${{ item.subtotal_producto }}</td>
-            <td>
-              <!-- Botones provisionales para gestionar el detalle -->
-              <button class="btn btn-primary btn-sm">Editar</button>
-              <button class="btn btn-danger btn-sm">Quitar</button>
-            </td>
+
+            <!-- Formulario individual para actualizar la cantidad del ítem -->
+            <form method="POST" action="{{ url_for('facturas.actualizar_detalle', id_detalle=item.id) }}">
+              <input type="hidden" name="id_factura" value="{{ factura.id }}">
+              <input type="hidden" name="precio_unitario" value="{{ item.precio_unitario }}">
+              <td>
+                <input type="number" min="1" name="cantidad" value="{{ item.cantidad }}" class="form-control" style="width: 90px; display: inline-block;" required>
+              </td>
+              <td>${{ item.precio_unitario }}</td>
+              <td>${{ item.subtotal_producto }}</td>
+              <td>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+            </form>
+
+                  <!-- Formulario individual para quitar el ítem -->
+                  <form method="POST" action="{{ url_for('facturas.eliminar_detalle', id_detalle=item.id) }}" style="display:inline;">
+                    <input type="hidden" name="id_factura" value="{{ factura.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de quitar este producto de la factura?');">Quitar</button>
+                  </form>
+                </div>
+              </td>
           </tr>
           {% else %}
           <tr>

@@ -7,71 +7,94 @@
   </div>
 
   <div class="form-card">
-    <form method="POST" action="{{ url_for('facturas.nuevo') }}" class="custom-form">
+    <form method="POST" action="{{ url_for('facturas.nuevo') }}" class="custom-form" id="form-factura">
       
-      <!-- Seccion 1: Datos de la Venta (3 Columnas) -->
+      <!-- Sección 1: Datos de la Venta (3 Columnas con Buscadores Modales) -->
       <div class="form-grid grid-col-3">
+        
+        <!-- Campo Cliente -->
         <div class="form-group">
-          <label for="id_cliente">Cliente</label>
-          <select class="form-control" id="id_cliente" name="id_cliente" required>
-            <option value="" disabled selected>Seleccione un cliente...</option>
-            {% for c in clientes %}
-              <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
-            {% endfor %}
-          </select>
+          <label for="cliente_display">Cliente</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="cliente_display" class="form-control" placeholder="Ningún cliente seleccionado" readonly required style="background-color: #f8f9fa; cursor: pointer;" onclick="abrirModalCliente()">
+            <input type="hidden" id="id_cliente" name="id_cliente" required>
+            <button type="button" class="btn btn-secondary" onclick="abrirModalCliente()" title="Buscar Cliente">
+              <span class="material-symbols-rounded" style="vertical-align: middle;">search</span>
+            </button>
+          </div>
         </div>
 
+        <!-- Campo Vendedor -->
         <div class="form-group">
-          <label for="id_vendedor">Vendedor</label>
-          <select class="form-control" id="id_vendedor" name="id_vendedor" required>
-            <option value="" disabled selected>Seleccione un vendedor...</option>
-            {% for v in vendedores %}
-              <option value="{{ v.id }}">{{ v.nombre }} {{ v.apellido }}</option>
-            {% endfor %}
-          </select>
+          <label for="vendedor_display">Vendedor</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="vendedor_display" class="form-control" placeholder="Ningún vendedor seleccionado" readonly required style="background-color: #f8f9fa; cursor: pointer;" onclick="abrirModalVendedor()">
+            <input type="hidden" id="id_vendedor" name="id_vendedor" required>
+            <button type="button" class="btn btn-secondary" onclick="abrirModalVendedor()" title="Buscar Vendedor">
+              <span class="material-symbols-rounded" style="vertical-align: middle;">search</span>
+            </button>
+          </div>
         </div>
         
+        <!-- Campo Usuario (Bloqueado a la sesión actual) -->
         <div class="form-group">
-          <label for="id_usuario">Usuario</label>
-          <select class="form-control" id="id_usuario" name="id_usuario" required>
-            <option value="" disabled selected>Seleccione un usuario...</option>
-            {% for u in usuarios %}
-              <option value="{{ u.id }}">{{ u.nombre }} {{ u.apellido }}</option>
-            {% endfor %}
-          </select>
+          <label for="usuario_display">Usuario (Atendiendo)</label>
+          <input type="text" class="form-control" id="usuario_display" 
+                 value="{{ session.usuario.nombre }} {{ session.usuario.apellido }}" disabled readonly style="background-color: #e9ecef; cursor: not-allowed;">
+          <input type="hidden" name="id_usuario" value="{{ session.usuario.id }}">
         </div>
       </div>
 
       <div class="form-divider"></div>
       
       <!-- Sección 2: Detalle de Productos -->
-      <div class="dynamic-section-header">
+      <div class="dynamic-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h3>Detalle de Productos</h3>
+        <button type="button" class="btn btn-secondary" onclick="abrirModalProducto()">
+          <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 18px;">search</span> Buscar y Agregar Producto
+        </button>
       </div>
 
-      <div id="productos-container" class="dynamic-items-wrapper">
-        <div class="producto-item dynamic-row">
-          <div class="form-group flex-2">
-            <label>Producto</label>
-            <select name="id_producto[]" class="form-control" required>
-              <option value="" disabled selected>Seleccione un producto...</option>
-              {% for p in productos %}
-                <option value="{{ p.id }}">{{ p.nombre_producto }} - ${{ p.valor_unitario }}</option>
-              {% endfor %}
-            </select>
+      <!-- Tabla de Productos Seleccionados -->
+      <div class="table-responsive">
+        <table class="custom-table" id="tabla-seleccionados">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock Disp.</th>
+              <th>Valor Unitario</th>
+              <th style="width: 120px;">Cantidad</th>
+              <th>Subtotal</th>
+              <th style="width: 80px;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="body-productos-seleccionados">
+            <tr id="row-empty">
+              <td colspan="6" style="text-align: center; color: #6c757d; padding: 2rem;">
+                No has agregado productos a la factura. Haz clic en "Buscar y Agregar Producto".
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Totales Resumidos -->
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+        <div style="min-width: 250px; background: #f8f9fa; padding: 1rem; border-radius: 6px; border: 1px solid #dee2e6;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Subtotal:</span>
+            <strong id="lbl-subtotal">$0,00</strong>
           </div>
-          <div class="form-group flex-1">
-            <label>Cantidad</label>
-            <input type="number" name="cantidad[]" class="form-control" min="1" placeholder="Cantidad" required>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>IVA (19%):</span>
+            <strong id="lbl-iva">$0,00</strong>
           </div>
-          <div class="form-group flex-action">
-            <button type="button" class="btn-remove btn-danger" style="display: none;">Quitar</button>
+          <hr style="margin: 0.5rem 0;">
+          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; color: #2c3e50;">
+            <span>Total:</span>
+            <strong id="lbl-total">$0,00</strong>
           </div>
         </div>
-      </div>
-
-      <div class="dynamic-actions">
-        <button type="button" id="add-producto" class="btn-secondary">+ Agregar otro producto</button>
       </div>
 
       <div class="form-divider"></div>
@@ -83,34 +106,416 @@
   </div>
 </main>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('productos-container');
-    const addBtn = document.getElementById('add-producto');
+<!-- ================= MODAL BUSCAR CLIENTE ================= -->
+<div id="modalBuscarCliente" class="custom-modal" style="display: none;">
+  <div class="modal-content" style="max-width: 700px;">
+    <div class="modal-header">
+      <h3>Seleccionar Cliente</h3>
+      <span class="modal-close" onclick="cerrarModalCliente()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom: 1rem; display: flex; gap: 10px;">
+        <input type="text" id="txtBuscarCliente" class="form-control" placeholder="Buscar por nombre, apellido o documento..." onkeyup="if(event.key==='Enter') cargarClientesModal(1)">
+        <button type="button" class="btn-primary" onclick="cargarClientesModal(1)">Buscar</button>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>Documento</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="body-modal-clientes"></tbody>
+        </table>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+        <span id="lblPagClienteInfo" style="font-size: 0.85rem; color: #6c757d;">Página 1</span>
+        <div style="display: flex; gap: 5px;">
+          <button type="button" id="btnPagClientePrev" class="btn btn-secondary btn-sm" onclick="cambiarPaginaCliente(-1)">Anterior</button>
+          <button type="button" id="btnPagClienteNext" class="btn btn-secondary btn-sm" onclick="cambiarPaginaCliente(1)">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    function attachRemoveEvent(button) {
-        button.addEventListener('click', function() {
-            const row = this.closest('.producto-item');
-            if (container.querySelectorAll('.producto-item').length > 1) {
-                row.remove();
-            }
-        });
+<!-- ================= MODAL BUSCAR VENDEDOR ================= -->
+<div id="modalBuscarVendedor" class="custom-modal" style="display: none;">
+  <div class="modal-content" style="max-width: 700px;">
+    <div class="modal-header">
+      <h3>Seleccionar Vendedor</h3>
+      <span class="modal-close" onclick="cerrarModalVendedor()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom: 1rem; display: flex; gap: 10px;">
+        <input type="text" id="txtBuscarVendedor" class="form-control" placeholder="Buscar por nombre, apellido o documento..." onkeyup="if(event.key==='Enter') cargarVendedoresModal(1)">
+        <button type="button" class="btn-primary" onclick="cargarVendedoresModal(1)">Buscar</button>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre Completo</th>
+              <th>Documento</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="body-modal-vendedores"></tbody>
+        </table>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+        <span id="lblPagVendedorInfo" style="font-size: 0.85rem; color: #6c757d;">Página 1</span>
+        <div style="display: flex; gap: 5px;">
+          <button type="button" id="btnPagVendedorPrev" class="btn btn-secondary btn-sm" onclick="cambiarPaginaVendedor(-1)">Anterior</button>
+          <button type="button" id="btnPagVendedorNext" class="btn btn-secondary btn-sm" onclick="cambiarPaginaVendedor(1)">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL BUSCAR PRODUCTO ================= -->
+<div id="modalBuscarProducto" class="custom-modal" style="display: none;">
+  <div class="modal-content" style="max-width: 750px;">
+    <div class="modal-header">
+      <h3>Buscar Productos</h3>
+      <span class="modal-close" onclick="cerrarModalProducto()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom: 1rem; display: flex; gap: 10px;">
+        <input type="text" id="txtBuscadorModal" class="form-control" placeholder="Buscar por nombre o código..." onkeyup="if(event.key==='Enter') cargarProductosModal(1)">
+        <button type="button" class="btn-primary" onclick="cargarProductosModal(1)">Buscar</button>
+      </div>
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Stock</th>
+              <th>Precio Unitario</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="body-modal-productos"></tbody>
+        </table>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+        <span id="lblPaginacionInfo" style="font-size: 0.85rem; color: #6c757d;">Página 1</span>
+        <div style="display: flex; gap: 5px;">
+          <button type="button" id="btnPagPrev" class="btn btn-secondary btn-sm" onclick="cambiarPaginaModal(-1)">Anterior</button>
+          <button type="button" id="btnPagNext" class="btn btn-secondary btn-sm" onclick="cambiarPaginaModal(1)">Siguiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.custom-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 15px;
+}
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.modal-close {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #888;
+}
+.modal-close:hover { color: #000; }
+</style>
+
+<script>
+// Format COP
+const formatCOP = (num) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
+
+// Variables de paginación
+let pagCliente = 1, totalPagCliente = 1;
+let pagVendedor = 1, totalPagVendedor = 1;
+let pagProducto = 1, totalPagProducto = 1;
+const productosSeleccionadosMap = new Map();
+
+/* ------------------ MODAL CLIENTE ------------------ */
+function abrirModalCliente() {
+  document.getElementById('modalBuscarCliente').style.display = 'flex';
+  cargarClientesModal(1);
+}
+function cerrarModalCliente() {
+  document.getElementById('modalBuscarCliente').style.display = 'none';
+}
+async function cargarClientesModal(pagina) {
+  const q = document.getElementById('txtBuscarCliente').value.trim();
+  const tbody = document.getElementById('body-modal-clientes');
+  tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Cargando clientes...</td></tr>`;
+
+  try {
+    const res = await fetch(`/facturas/api/clientes?page=${pagina}&per_page=5&q=${encodeURIComponent(q)}`);
+    const result = await res.json();
+    const clientes = result.data || [];
+    const meta = result.meta || {};
+
+    pagCliente = meta.page || 1;
+    totalPagCliente = meta.total_pages || 1;
+
+    document.getElementById('lblPagClienteInfo').innerText = `Página ${pagCliente} de ${totalPagCliente}`;
+    document.getElementById('btnPagClientePrev').disabled = !meta.has_prev;
+    document.getElementById('btnPagClienteNext').disabled = !meta.has_next;
+
+    tbody.innerHTML = '';
+    if (clientes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No se encontraron clientes.</td></tr>`;
+      return;
     }
 
-    addBtn.addEventListener('click', function() {
-        const rows = container.querySelectorAll('.producto-item');
-        const newRow = rows[0].cloneNode(true);
-        
-        // Limpiar inputs numéricos y reiniciar selects a la opción por defecto
-        newRow.querySelectorAll('input').forEach(input => input.value = '');
-        newRow.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-        
-        const removeBtn = newRow.querySelector('.btn-remove');
-        removeBtn.style.display = 'inline-flex';
-        attachRemoveEvent(removeBtn);
-
-        container.appendChild(newRow);
+    clientes.forEach(c => {
+      const nombreCompleto = `${c.nombre} ${c.apellido}`;
+      const doc = c.documentoIdentidad || c.documento_identidad || 'N/A';
+      tbody.innerHTML += `
+        <tr>
+          <td>#${c.id}</td>
+          <td><strong>${nombreCompleto}</strong></td>
+          <td>${doc}</td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm" onclick="seleccionarCliente(${c.id}, '${nombreCompleto.replace(/'/g, "\\'")}')">Seleccionar</button>
+          </td>
+        </tr>
+      `;
     });
-});
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar clientes.</td></tr>`;
+  }
+}
+function cambiarPaginaCliente(delta) {
+  const n = pagCliente + delta;
+  if (n >= 1 && n <= totalPagCliente) cargarClientesModal(n);
+}
+function seleccionarCliente(id, nombre) {
+  document.getElementById('id_cliente').value = id;
+  document.getElementById('cliente_display').value = `#${id} - ${nombre}`;
+  cerrarModalCliente();
+}
+
+/* ------------------ MODAL VENDEDOR ------------------ */
+function abrirModalVendedor() {
+  document.getElementById('modalBuscarVendedor').style.display = 'flex';
+  cargarVendedoresModal(1);
+}
+function cerrarModalVendedor() {
+  document.getElementById('modalBuscarVendedor').style.display = 'none';
+}
+async function cargarVendedoresModal(pagina) {
+  const q = document.getElementById('txtBuscarVendedor').value.trim();
+  const tbody = document.getElementById('body-modal-vendedores');
+  tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Cargando vendedores...</td></tr>`;
+
+  try {
+    const res = await fetch(`/facturas/api/vendedores?page=${pagina}&per_page=5&q=${encodeURIComponent(q)}`);
+    const result = await res.json();
+    const vendedores = result.data || [];
+    const meta = result.meta || {};
+
+    pagVendedor = meta.page || 1;
+    totalPagVendedor = meta.total_pages || 1;
+
+    document.getElementById('lblPagVendedorInfo').innerText = `Página ${pagVendedor} de ${totalPagVendedor}`;
+    document.getElementById('btnPagVendedorPrev').disabled = !meta.has_prev;
+    document.getElementById('btnPagVendedorNext').disabled = !meta.has_next;
+
+    tbody.innerHTML = '';
+    if (vendedores.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No se encontraron vendedores.</td></tr>`;
+      return;
+    }
+
+    vendedores.forEach(v => {
+      const nombreCompleto = `${v.nombre} ${v.apellido}`;
+      const doc = v.documentoIdentidad || v.documento_identidad || 'N/A';
+      tbody.innerHTML += `
+        <tr>
+          <td>#${v.id}</td>
+          <td><strong>${nombreCompleto}</strong></td>
+          <td>${doc}</td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm" onclick="seleccionarVendedor(${v.id}, '${nombreCompleto.replace(/'/g, "\\'")}')">Seleccionar</button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar vendedores.</td></tr>`;
+  }
+}
+function cambiarPaginaVendedor(delta) {
+  const n = pagVendedor + delta;
+  if (n >= 1 && n <= totalPagVendedor) cargarVendedoresModal(n);
+}
+function seleccionarVendedor(id, nombre) {
+  document.getElementById('id_vendedor').value = id;
+  document.getElementById('vendedor_display').value = `#${id} - ${nombre}`;
+  cerrarModalVendedor();
+}
+
+/* ------------------ MODAL PRODUCTO ------------------ */
+function abrirModalProducto() {
+  document.getElementById('modalBuscarProducto').style.display = 'flex';
+  cargarProductosModal(1);
+}
+function cerrarModalProducto() {
+  document.getElementById('modalBuscarProducto').style.display = 'none';
+}
+async function cargarProductosModal(pagina) {
+  const q = document.getElementById('txtBuscadorModal').value.trim();
+  const tbody = document.getElementById('body-modal-productos');
+  tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Cargando productos...</td></tr>`;
+
+  try {
+    const res = await fetch(`/facturas/api/productos?page=${pagina}&per_page=5&q=${encodeURIComponent(q)}`);
+    const result = await res.json();
+    const productos = result.data || [];
+    const meta = result.meta || {};
+
+    pagProducto = meta.page || 1;
+    totalPagProducto = meta.total_pages || 1;
+
+    document.getElementById('lblPaginacionInfo').innerText = `Página ${pagProducto} de ${totalPagProducto}`;
+    document.getElementById('btnPagPrev').disabled = !meta.has_prev;
+    document.getElementById('btnPagNext').disabled = !meta.has_next;
+
+    tbody.innerHTML = '';
+    if (productos.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No se encontraron productos.</td></tr>`;
+      return;
+    }
+
+    productos.forEach(p => {
+      const yaAgregado = productosSeleccionadosMap.has(p.id);
+      const sinStock = p.stock <= 0;
+
+      let btnHTML = '';
+      if (sinStock) {
+        btnHTML = `<span class="badge" style="background:#e74c3c; color:white; padding:4px 8px; border-radius:4px;">Agotado</span>`;
+      } else if (yaAgregado) {
+        btnHTML = `<span class="badge" style="background:#27ae60; color:white; padding:4px 8px; border-radius:4px;">Añadido</span>`;
+      } else {
+        btnHTML = `<button type="button" class="btn btn-primary btn-sm" onclick='agregarProductoAFactura(${JSON.stringify(p)})'>Seleccionar</button>`;
+      }
+
+      tbody.innerHTML += `
+        <tr>
+          <td>#${p.id}</td>
+          <td><strong>${p.nombre_producto}</strong></td>
+          <td><span style="font-weight: bold; color: ${p.stock < 5 ? '#e74c3c' : '#27ae60'}">${p.stock} unidades</span></td>
+          <td>${formatCOP(p.valor_unitario)}</td>
+          <td>${btnHTML}</td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar productos.</td></tr>`;
+  }
+}
+function cambiarPaginaModal(delta) {
+  const n = pagProducto + delta;
+  if (n >= 1 && n <= totalPagProducto) cargarProductosModal(n);
+}
+function agregarProductoAFactura(producto) {
+  productosSeleccionadosMap.set(producto.id, { ...producto, cantidadElegida: 1 });
+  renderizarTablaFactura();
+  cargarProductosModal(pagProducto);
+}
+function removerProductoFactura(id) {
+  productosSeleccionadosMap.delete(id);
+  renderizarTablaFactura();
+}
+function cambiarCantidad(id, nuevaCant, maxStock) {
+  let cant = parseInt(nuevaCant, 10);
+  if (isNaN(cant) || cant < 1) cant = 1;
+  if (cant > maxStock) {
+    alert(`No puedes agregar más del stock disponible (${maxStock} unidades).`);
+    cant = maxStock;
+  }
+  const prod = productosSeleccionadosMap.get(id);
+  if (prod) {
+    prod.cantidadElegida = cant;
+    renderizarTablaFactura();
+  }
+}
+function renderizarTablaFactura() {
+  const tbody = document.getElementById('body-productos-seleccionados');
+  if (productosSeleccionadosMap.size === 0) {
+    tbody.innerHTML = `
+      <tr id="row-empty">
+        <td colspan="6" style="text-align: center; color: #6c757d; padding: 2rem;">
+          No has agregado productos a la factura. Haz clic en "Buscar y Agregar Producto".
+        </td>
+      </tr>`;
+    calcularTotales(0);
+    return;
+  }
+
+  tbody.innerHTML = '';
+  let subtotalGeneral = 0;
+
+  productosSeleccionadosMap.forEach(p => {
+    const subtotalProducto = p.valor_unitario * p.cantidadElegida;
+    subtotalGeneral += subtotalProducto;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>
+          <input type="hidden" name="id_producto[]" value="${p.id}">
+          <strong>${p.nombre_producto}</strong>
+        </td>
+        <td><span style="font-weight:bold; color: #2c3e50;">${p.stock} disp.</span></td>
+        <td>${formatCOP(p.valor_unitario)}</td>
+        <td>
+          <input type="number" name="cantidad[]" class="form-control" 
+                 value="${p.cantidadElegida}" min="1" max="${p.stock}"
+                 onchange="cambiarCantidad(${p.id}, this.value, ${p.stock})" required>
+        </td>
+        <td><strong>${formatCOP(subtotalProducto)}</strong></td>
+        <td>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removerProductoFactura(${p.id})">Quitar</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  calcularTotales(subtotalGeneral);
+}
+function calcularTotales(subtotal = 0) {
+  const iva = subtotal * 0.19;
+  const total = subtotal + iva;
+  document.getElementById('lbl-subtotal').innerText = formatCOP(subtotal);
+  document.getElementById('lbl-iva').innerText = formatCOP(iva);
+  document.getElementById('lbl-total').innerText = formatCOP(total);
+}
 </script>
 {% endblock %}

@@ -39,7 +39,7 @@ def rol_required(*roles):
             usuario = session.get('usuario') or {}
             if usuario.get('rol') not in roles:
                 flash('No tienes permisos para acceder a esa sección.', 'danger')
-                return redirect(url_for('clientes.index'))
+                return redirect(url_for('productos.index'))
             return f(*args, **kwargs)
         return decorada
     return decorador
@@ -67,11 +67,17 @@ def sesion_expirada():
 # Rutas
 # ---------------------------------------------------------------------------
 
+# En src/controllers/auth_controller.py
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # Si ya hay sesión, no tiene sentido mostrar el formulario
     if session.get('api_token'):
-         return redirect('index.html')
+        rol = session.get('usuario', {}).get('rol')
+        if rol == 'Usuario':
+            return redirect(url_for('productos.index'))
+        elif rol == 'Cliente':
+            return redirect(url_for('clientes.mis_facturas'))
+        return redirect(url_for('home.index'))
 
     if request.method == 'POST':
         correo = request.form.get('correo', '').strip()
@@ -82,7 +88,6 @@ def login():
             return render_template('auth/login.html', correo=correo)
 
         try:
-            # APIClient sin token: el login es la ruta pública
             data = APIClient().post('/auth/login', json={
                 'correo': correo,
                 'password': password
@@ -92,16 +97,19 @@ def login():
             session['usuario'] = data['usuario']
             session.permanent = True
 
-            # flash(f"Bienvenido, {data['usuario']['nombre']}.", 'success')
-
-            # Vuelve a donde el usuario quería ir antes de que lo mandaran acá
             destino = session.pop('next_url', None)
-            return redirect(destino or url_for('clientes.index'))
+            rol = data['usuario'].get('rol')
+
+            # Redirección dinámica por rol
+            if rol == 'Usuario':
+                return redirect(url_for('productos.index'))
+            elif rol == 'Cliente':
+                return redirect(url_for('clientes.mis_facturas'))
+            
+            return redirect(destino or url_for('home.index'))
 
         except APIError as e:
             flash(e.message, 'danger')
-            # Se devuelve el correo para no obligar a reescribirlo,
-            # nunca la contraseña
             return render_template('auth/login.html', correo=correo)
 
     return render_template('auth/login.html', correo='')

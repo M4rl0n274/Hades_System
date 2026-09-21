@@ -12,21 +12,6 @@ def _client():
 @cliente_bp.route('/')
 @login_required
 @rol_required('Administrador', 'Vendedor')
-
-
-# def index():
-#     q = request.args.get('q', '').strip()
-#     try:
-#         data = _client().get('/clientes/')
-#         print(f"data: {data}")  # Debugging line to check the structure of the response
-#         clientes = APIClient.as_list(data)
-#     except APIError as e:        
-#         clientes = []
-
-#     print(clientes)  # Debugging line to check the structure of the response
-#     return render_template('Clientes/VerClientes.html', clientes=clientes, q=q)
-
-
 def index():
     q = request.args.get('q', '').strip()
     meta = {}
@@ -57,7 +42,7 @@ def index():
                         cliente['FechaDeNacimiento'] = str(fecha_api)[:10]
                 except Exception:
                     pass
-        # ==========================================
+    
      
         
         if meta:
@@ -85,19 +70,25 @@ def nuevo():
         direccion = request.form.get('direccion')
         telefono = request.form.get('telefono')
         FechaDeNacimiento = request.form.get('FechaDeNacimiento')
-    
+        password = request.form.get('password')  # <-- Captura la contraseña ingresada
+
+        payload = {
+            'nombre': nombre,
+            'apellido': apellido,
+            'edad': edad,
+            'correo': correo,
+            'documentoIdentidad': documentoIdentidad,
+            'direccion': direccion,
+            'telefono': telefono,
+            'FechaDeNacimiento': FechaDeNacimiento
+        }
+
+        # Incluye la contraseña si fue diligenciada en el formulario
+        if password and password.strip() != '':
+            payload['password'] = password.strip()
+
         try:
-            _client().post('/clientes/', json={ 
-                'nombre': nombre,
-                'apellido': apellido,
-                'edad': edad,
-                'correo': correo,
-                'documentoIdentidad': documentoIdentidad,
-                'direccion': direccion,
-                'telefono': telefono,
-                'FechaDeNacimiento': FechaDeNacimiento
-            })  
-            
+            _client().post('/clientes/', json=payload)
             flash('Cliente creado exitosamente', 'success')
             return redirect(url_for('clientes.index'))
         except APIError as e:
@@ -106,40 +97,54 @@ def nuevo():
     return render_template('Clientes/FormClientes.html')
 
 
-# ==========================================
-# RUTAS NUEVAS PARA EDITAR Y ELIMINAR CLIENTES
-# ==========================================
+
+# PARA EDITAR Y ELIMINAR CLIENTES
+
 
 @cliente_bp.route('/<int:id>/editar', methods=['GET', 'POST'])
 @login_required
-@rol_required('Administrador') # Ajusta los roles si es necesario
+@rol_required('Administrador')
 def editar(id):
     if request.method == 'POST':
         nombre = request.form.get('nombre')
         apellido = request.form.get('apellido')
-        edad = request.form.get('edad', type=int) # Forzamos a entero
+        edad = request.form.get('edad', type=int)
         correo = request.form.get('correo')
         documentoIdentidad = request.form.get('documentoIdentidad')
         direccion = request.form.get('direccion')
         telefono = request.form.get('telefono')
         FechaDeNacimiento = request.form.get('FechaDeNacimiento')
+        password = request.form.get('password')  # <-- Captura opcional al editar
+
+        payload = {
+            'nombre': nombre,
+            'apellido': apellido,
+            'edad': edad,
+            'correo': correo,
+            'documentoIdentidad': documentoIdentidad,
+            'direccion': direccion,
+            'telefono': telefono,
+            'FechaDeNacimiento': FechaDeNacimiento
+        }
+
+        # Solo envía la contraseña al backend si fue modificada
+        if password and password.strip() != '':
+            payload['password'] = password.strip()
 
         try:
-            _client().put(f'/clientes/{id}', json={ 
-                'nombre': nombre,
-                'apellido': apellido,
-                'edad': edad,
-                'correo': correo,
-                'documentoIdentidad': documentoIdentidad,
-                'direccion': direccion,
-                'telefono': telefono,
-                'FechaDeNacimiento': FechaDeNacimiento
-            })  
-            
+            _client().put(f'/clientes/{id}', json=payload)
             flash('Cliente actualizado exitosamente', 'success')
             return redirect(url_for('clientes.index'))
         except APIError as e:
             flash(f'Error al actualizar el cliente: {e.message}', 'danger')
+
+    # Carga de datos del cliente en GET para llenar la vista de edición
+    try:
+        cliente = _client().get(f'/clientes/{id}')
+        return render_template('Clientes/EditarCliente.html', cliente=cliente)
+    except APIError as e:
+        flash(f'Error al obtener datos del cliente: {e.message}', 'danger')
+        return redirect(url_for('clientes.index'))
 
 
 
@@ -190,3 +195,39 @@ def eliminar(id):
     return redirect(url_for('clientes.index'))
 
 
+
+# Ruta para que el cliente vea sus facturas asociadas
+@cliente_bp.route('/mis-facturas')
+@login_required
+@rol_required('Cliente')
+def mis_facturas():
+    usuario = session.get('usuario', {})
+    id_cliente = usuario.get('id')
+    page = request.args.get('page', 1, type=int)
+
+    try:
+        # Filtrar facturas enviando el ID del cliente autenticado a la API
+        params = {'id_cliente': id_cliente, 'page': page, 'per_page': 8}
+        data = _client().get('/factura/', params=params)
+        
+        facturas = APIClient.as_list(data)
+        meta = data.get('meta', {}) if isinstance(data, dict) else {}
+        
+        if meta:
+            meta['pages'] = meta.get('total_pages', meta.get('pages', 1))
+            meta['prev_num'] = meta.get('page', 1) - 1
+            meta['next_num'] = meta.get('page', 1) + 1
+
+        # Resumen financiero personal del cliente
+        total_comprado = sum(float(f.get('total', 0)) for f in facturas)
+
+    except Exception:
+        facturas = []
+        meta = {}
+        total_comprado = 0
+
+    return render_template('clientes/MisFacturas.html', 
+                           cliente=usuario, 
+                           facturas=facturas, 
+                           meta=meta, 
+                           total_comprado=total_comprado)

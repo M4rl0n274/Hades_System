@@ -11,7 +11,7 @@ def _client():
 
 @producto_bp.route('/')
 @login_required
-@rol_required('Administrador', 'Vendedor')
+@rol_required('Administrador', 'Vendedor', 'Usuario')
 # def index():
 #     q = request.args.get('q', '').strip()
 #     try:

@@ -9,7 +9,7 @@
       <span class="badge-count">{{ productos|length }} registros</span>
     </div>
 
-    <!-- Controles y Filtros (Solo Nombre e ID) -->
+    <!-- Controles y Filtros -->
     <div class="table-controls">
       <div class="sort-wrapper">
         <label for="sortSelect">Ordenar por:</label>
@@ -37,7 +37,12 @@
             <th data-column="valor">Valor Unitario</th>
             <th data-column="stock">Stock</th>
             <th data-column="codigo">Código</th>
+
+            <!-- La columna Acciones solo se muestra a roles que pueden realizar acciones -->
+            {% if tiene_rol('Administrador', 'Vendedor') %}
             <th data-column="acciones">Acciones</th>
+            {% endif %}
+          </tr>
         </thead>
         <tbody id="table-body">
           {% for producto in productos %}
@@ -49,18 +54,33 @@
             <td data-label="Valor Unitario" class="font-weight-bold">{{ producto.valor_unitario | cop }}</td>
             <td data-label="Stock">{{ producto.stock }}</td>
             <td data-label="Código">{{ producto.codigo }}</td>
-            <td data-label="Acciones"> <!-- NUEVA COLUMNA CON BOTONES -->
-              <!-- Botón de Editar -->
-              <a href="{{ url_for('productos.editar', id=producto.id) }}" class="btn btn-primary btn-sm">Editar</a>
 
-              <!-- Botón de Eliminar (usa un formulario para mayor seguridad con el método POST) -->
+            <!-- Celda de acciones condicional -->
+            {% if tiene_rol('Administrador', 'Vendedor') %}
+            <td data-label="Acciones">
+              
+              <!-- Editar: Administrador y Vendedor -->
+              {% if tiene_rol('Administrador', 'Vendedor') %}
+              <a href="{{ url_for('productos.editar', id=producto.id) }}" class="btn btn-primary btn-sm">Editar</a>
+              {% endif %}
+
+              <!-- Eliminar: Exclusivo para Administrador -->
+              {% if tiene_rol('Administrador') %}
               <form action="{{ url_for('productos.eliminar', id=producto.id) }}" method="POST" style="display:inline;">
                 <button type="submit" class="btn btn-danger btn-sm"
                   onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
+              </form>
+              {% endif %}
+
+            </td>
+            {% endif %}
           </tr>
           {% else %}
           <tr class="empty-row">
-            <td colspan="7">No se encontraron productos en el sistema.</td>
+            <!-- El colspan se adapta según si existe o no la columna de acciones -->
+            <td colspan="{% if tiene_rol('Administrador', 'Vendedor') %}8{% else %}7{% endif %}">
+              No se encontraron productos en el sistema.
+            </td>
           </tr>
           {% endfor %}
         </tbody>

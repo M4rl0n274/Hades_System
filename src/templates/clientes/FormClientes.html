@@ -2,12 +2,10 @@
 
 {% block barraNavegacion %}
 <main class="main-content">
-  <!-- Cabecera Reutilizable -->
   <div class="form-header-wrapper">
-    <h2>Registro de Cliente</h2>
+    <h2>Registro / Edición de Cliente</h2>
   </div>
 
-  <!-- Tarjeta Contenedora del Formulario -->
   <div class="form-card">
     <form method="POST" class="custom-form">
       
@@ -15,49 +13,58 @@
       <div class="form-grid grid-col-2">
         <div class="form-group">
           <label for="nombre">Nombre</label>
-          <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese su Nombre o nombres" required>
+          <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente.nombre if cliente else '' }}" placeholder="Ingrese nombre" required>
         </div>
         <div class="form-group">
           <label for="apellido">Apellidos</label>
-          <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Apellidos" required>
+          <input type="text" class="form-control" id="apellido" name="apellido" value="{{ cliente.apellido if cliente else '' }}" placeholder="Apellidos" required>
         </div>
       </div>
 
-      <!-- Bloque 2: Datos de Contacto y Edad (3 Columnas) -->
+      <!-- Bloque 2: Credenciales de Acceso (2 Columnas) -->
+      <div class="form-grid grid-col-2">
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input type="email" class="form-control" id="correo" name="correo" value="{{ cliente.correo if cliente else '' }}" placeholder="correo@ejemplo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña {% if cliente %}(Opcional){% endif %}</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" {% if not cliente %}required{% endif %}>
+        </div>
+      </div>
+
+      <!-- Bloque 3: Datos de Identificación y Contacto (3 Columnas) -->
       <div class="form-grid grid-col-3">
-        <div class="form-group">
-          <label for="edad">Edad</label>
-          <input type="number" class="form-control" id="edad" name="edad" placeholder="Edad">
-        </div>
-        <div class="form-group">
-          <label for="correo">Correo</label>
-          <input type="email" class="form-control" id="correo" name="correo" placeholder="correo@ejemplo.com">
-        </div>
         <div class="form-group">
           <label for="documentoIdentidad">Documento de Identidad</label>
-          <input type="text" class="form-control" id="documentoIdentidad" name="documentoIdentidad" placeholder="C.C / C.E">
+          <input type="text" class="form-control" id="documentoIdentidad" name="documentoIdentidad" value="{{ cliente.documentoIdentidad if cliente else '' }}" placeholder="C.C / C.E" required>
         </div>
-      </div>
-
-      <!-- Bloque 3: Ubicación y Fechas (3 Columnas) -->
-      <div class="form-grid grid-col-3">
         <div class="form-group">
-          <label for="direccion">Dirección</label>
-          <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Calle 3 # 12 - 21">
+          <label for="edad">Edad</label>
+          <input type="number" class="form-control" id="edad" name="edad" value="{{ cliente.edad if cliente else '' }}" placeholder="Edad">
         </div>
         <div class="form-group">
           <label for="telefono">Teléfono</label>
-          <input type="number" class="form-control" id="telefono" name="telefono" placeholder="658978">
+          <input type="text" class="form-control" id="telefono" name="telefono" value="{{ cliente.telefono if cliente else '' }}" placeholder="Teléfono de contacto">
+        </div>
+      </div>
+
+      <!-- Bloque 4: Ubicación y Fecha de Nacimiento (2 Columnas) -->
+      <div class="form-grid grid-col-2">
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente.direccion if cliente else '' }}" placeholder="Dirección de residencia">
         </div>
         <div class="form-group">
           <label for="FechaDeNacimiento">Fecha de Nacimiento</label>
-          <input type="date" class="form-control" id="FechaDeNacimiento" name="FechaDeNacimiento">
+          <input type="date" class="form-control" id="FechaDeNacimiento" name="FechaDeNacimiento" value="{{ cliente.FechaDeNacimiento if cliente else '' }}">
         </div>
       </div>
 
       <!-- Botón de Envío -->
       <div class="form-actions">
-        <button type="submit" class="btn-primary">Enviar</button>
+        <button type="submit" class="btn-primary">Guardar Cliente</button>
+        <a href="{{ url_for('clientes.index') }}" class="btn btn-secondary" style="text-decoration: none;">Cancelar</a>
       </div>
 
     </form>

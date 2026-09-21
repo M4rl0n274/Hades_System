@@ -1,13 +1,4 @@
-# from flask import Flask, render_template
-
-# app = Flask(__name__)
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-# @app.route("/")
-# def index():
-#     return render_template("index.html", nombre_usuario = "Marlon Quintero")
+from flask import Flask, render_template, session
 
 
 
@@ -31,13 +22,22 @@ def format_cop(valor):
     """Formatea un número a pesos colombianos con 2 decimales y coma (ej: $1.000.000,00)."""
     try:
         val = float(valor)
-        # Formato estándar con comas para miles y puntos para decimales
+        # Formato estándar con las comas para miles y puntos para decimales
         formatted = f"{val:,.2f}"
         # Intercambiamos separadores: comas -> puntos y puntos -> comas
         formatted = formatted.replace(",", "TEMP").replace(".", ",").replace("TEMP", ".")
         return f"${formatted}"
     except (ValueError, TypeError):
         return "$0,00"
+    
+    
+# sirve para mostrsr o no dinamicamente el opciones del Navbar dependiendo del rol
+@app.context_processor
+def utility_processor():
+    def tiene_rol(*roles):
+        usuario = session.get('usuario') or {}
+        return usuario.get('rol') in roles
+    return dict(tiene_rol=tiene_rol)
 
 # #! Rutas Clientes
 

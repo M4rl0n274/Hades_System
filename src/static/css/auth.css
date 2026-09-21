@@ -9,6 +9,52 @@
     padding: 20px;
 }
 
+
+
+
+/* ============================================================
+   ESTILOS BASE / MÓVILES (Pantallas pequeñas)
+   ============================================================ */
+.main-content {
+  margin-left: 0;
+  width: 100%;
+  padding: 1rem;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* ============================================================
+   PANTALLAS GRANDES / DESKTOP (A partir de 1024px)
+   ============================================================ */
+@media (min-width: 1024px) {
+  /* Solo se desplaza el contenido cuando hay espacio en pantalla grande */
+  .main-content {
+    margin-left: 302px; /* Ancho de la sidebar */
+    width: calc(100% - 302px);
+  }
+}
+
+/* ============================================================
+   PANTALLAS DE AUTENTICACIÓN (Login / Registro)
+   ============================================================ */
+.auth-layout {
+  margin-left: 0 !important;
+  width: 100% !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+
+
+
+
+
+
+
+
+
 .auth-card {
     background: #ffffff;
     border-radius: 16px;

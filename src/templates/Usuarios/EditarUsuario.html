@@ -1,0 +1,63 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Cabecera Reutilizable -->
+  <div class="form-header-wrapper">
+    <h2>Editar Usuario</h2>
+  </div>
+
+  <!-- Tarjeta Contenedora del Formulario -->
+  <div class="form-card">
+    <form method="POST" action="{{ url_for('usuarios.editar', id=usuario.id) }}" class="custom-form">
+      
+      <!-- Bloque 1: Nombres y Apellidos (2 Columnas) -->
+      <div class="form-grid grid-col-2">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" class="form-control" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input type="text" class="form-control" id="apellido" name="apellido" value="{{ usuario.apellido }}" required>
+        </div>
+      </div>
+
+      <!-- Bloque 2: Documento y Correo (2 Columnas) -->
+      <div class="form-grid grid-col-2">
+        <div class="form-group">
+          <label for="documento_identidad">Documento de Identidad</label>
+          <input type="text" class="form-control" id="documento_identidad" name="documento_identidad" value="{{ usuario.documento_identidad }}" required>
+        </div>
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input type="email" class="form-control" id="correo" name="correo" value="{{ usuario.correo }}" required>
+        </div>
+      </div>
+
+      <!-- Bloque 3: Rol y Nueva Contraseña Opcional (2 Columnas) -->
+      <div class="form-grid grid-col-2">
+        <div class="form-group">
+          <label for="rol">Rol</label>
+          <select class="form-control" id="rol" name="rol" required>
+            <option value="Administrador" {% if usuario.rol == 'Administrador' %}selected{% endif %}>Administrador</option>
+            <option value="Vendedor" {% if usuario.rol == 'Vendedor' %}selected{% endif %}>Vendedor</option>
+            <option value="Usuario" {% if usuario.rol == 'Usuario' %}selected{% endif %}>Usuario</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="password">Nueva Contraseña (Opcional)</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Dejar en blanco para mantener la actual">
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="form-actions" style="display: flex; gap: 10px; align-items: center;">
+        <button type="submit" class="btn-primary">Actualizar Usuario</button>
+        <a href="{{ url_for('usuarios.index') }}" class="btn btn-secondary" style="text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+</main>
+{% endblock %}

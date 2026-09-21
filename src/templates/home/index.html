@@ -1,0 +1,377 @@
+{% extends 'navBar.html' %}
+
+{% block barraNavegacion %}
+<main class="main-content">
+  <!-- Banner de Bienvenida -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h2>¡Bienvenido de nuevo, {{ usuario.nombre }} {{ usuario.apellido }}! 👋</h2>
+      <p>Resumen general del sistema de facturación. Rol actual: <strong>{{ usuario.rol }}</strong></p>
+    </div>
+    <div class="welcome-badge">
+      <span class="material-symbols-rounded">verified_user</span>
+      <span>{{ usuario.rol }}</span>
+    </div>
+  </div>
+
+  <!-- Tarjetas de Métricas (KPIs) -->
+  <div class="kpi-grid">
+    
+    <!-- Tarjeta: Productos -->
+    <div class="kpi-card border-blue">
+      <div class="kpi-icon bg-blue">
+        <span class="material-symbols-rounded">inventory_2</span>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Productos Registrados</span>
+        <h3 class="kpi-value">{{ kpis.total_productos }}</h3>
+      </div>
+    </div>
+
+    <!-- Tarjeta: Clientes -->
+    <div class="kpi-card border-green">
+      <div class="kpi-icon bg-green">
+        <span class="material-symbols-rounded">group</span>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Clientes Activos</span>
+        <h3 class="kpi-value">{{ kpis.total_clientes }}</h3>
+      </div>
+    </div>
+
+    <!-- Muestra Métricas Financieras si es Administrador -->
+    {% if tiene_rol('Administrador') %}
+    <!-- Tarjeta: Facturas -->
+    <div class="kpi-card border-purple">
+      <div class="kpi-icon bg-purple">
+        <span class="material-symbols-rounded">receipt_long</span>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Facturas Emitidas</span>
+        <h3 class="kpi-value">{{ kpis.total_facturas }}</h3>
+      </div>
+    </div>
+
+    <!-- Tarjeta: Ingresos -->
+    <div class="kpi-card border-orange">
+      <div class="kpi-icon bg-orange">
+        <span class="material-symbols-rounded">payments</span>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-title">Ingresos Totales</span>
+        <h3 class="kpi-value">{{ kpis.ingresos_totales | cop }}</h3>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Contenedor Inferior: Gráfica y Accesos Rápidos -->
+  <div class="dashboard-content-grid">
+    
+    <!-- Gráfica Visual (Solo visible para Administrador) -->
+    {% if tiene_rol('Administrador') %}
+    <div class="dashboard-card chart-container">
+      <div class="card-header">
+        <h3><span class="material-symbols-rounded">show_chart</span> Tendencia de Ventas Recientes</h3>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper">
+          <canvas id="chartVentas"></canvas>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Panel de Accesos Rápidos (Administrador y Vendedor) -->
+    <div class="dashboard-card quick-actions-card {% if not tiene_rol('Administrador') %}full-width{% endif %}">
+      <div class="card-header">
+        <h3><span class="material-symbols-rounded">bolt</span> Accesos Rápidos</h3>
+      </div>
+      <div class="quick-buttons-grid">
+        <a href="{{ url_for('facturas.nuevo') }}" class="quick-btn btn-primary">
+          <span class="material-symbols-rounded">add_shopping_cart</span>
+          <span>Nueva Factura</span>
+        </a>
+        <a href="{{ url_for('clientes.index') }}" class="quick-btn btn-secondary">
+          <span class="material-symbols-rounded">person_search</span>
+          <span>Ver Clientes</span>
+        </a>
+        <a href="{{ url_for('productos.index') }}" class="quick-btn btn-secondary">
+          <span class="material-symbols-rounded">inventory</span>
+          <span>Ver Productos</span>
+        </a>
+        {% if tiene_rol('Administrador') %}
+        <a href="{{ url_for('usuarios.index') }}" class="quick-btn btn-secondary">
+          <span class="material-symbols-rounded">manage_accounts</span>
+          <span>Gestión Usuarios</span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Estilos CSS del Dashboard alineados a navbar.css -->
+<style>
+/* Banner de Bienvenida */
+.welcome-banner {
+  background-color: rgb(21, 26, 45);
+  color: #ffffff;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(21, 26, 45, 0.12);
+}
+
+.welcome-text h2 {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.welcome-text p {
+  margin: 0;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+
+.welcome-badge {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Grilla KPI */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(21, 26, 45, 0.05);
+  border: 1px solid rgba(21, 26, 45, 0.08);
+  border-left: 5px solid #151A2D;
+}
+
+.border-blue { border-left-color: #2563EB; }
+.border-green { border-left-color: #10B981; }
+.border-purple { border-left-color: #8B5CF6; }
+.border-orange { border-left-color: #F59E0B; }
+
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.bg-blue { background: #2563EB; }
+.bg-green { background: #10B981; }
+.bg-purple { background: #8B5CF6; }
+.bg-orange { background: #F59E0B; }
+
+.kpi-title {
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.kpi-value {
+  margin: 0.2rem 0 0 0;
+  font-size: 1.35rem;
+  color: #151A2D;
+  font-weight: 700;
+}
+
+/* Dashboard Content Grid & Responsive Fixes */
+.dashboard-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.25rem;
+}
+
+/* REGLA CLAVE RESPONSIVE: Previene que los elementos de la grilla (como el canvas) fuercen un desborde */
+.dashboard-content-grid > * {
+  min-width: 0;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(21, 26, 45, 0.05);
+  border: 1px solid rgba(21, 26, 45, 0.08);
+}
+
+.card-header h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.05rem;
+  color: #151A2D;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* Wrapper adaptable para Chart.js */
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+
+/* Accesos Rápidos */
+.quick-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.quick-btn.btn-primary {
+  background: #151A2D;
+  color: #ffffff;
+}
+
+.quick-btn.btn-primary:hover {
+  background: #2563EB;
+  transform: translateY(-2px);
+}
+
+.quick-btn.btn-secondary {
+  background: #F1FAFF;
+  color: #151A2D;
+  border: 1px solid #CBE4FF;
+}
+
+.quick-btn.btn-secondary:hover {
+  background: #dde4fb;
+  transform: translateY(-2px);
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Media Queries para Móviles */
+@media (max-width: 992px) {
+  .dashboard-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 1.25rem;
+  }
+  
+  .welcome-text h2 {
+    font-size: 1.2rem;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    height: 220px;
+  }
+}
+</style>
+
+<!-- Librería Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% if tiene_rol('Administrador') %}
+<!-- Contenedor de datos JSON inyectados desde Flask -->
+<script id="grafica-data" type="application/json">
+  {
+    "labels": {{ grafica_data.labels | tojson }},
+    "valores": {{ grafica_data.valores | tojson }}
+  }
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const chartCanvas = document.getElementById('chartVentas');
+  if (!chartCanvas) return;
+
+  const rawData = document.getElementById('grafica-data').textContent;
+  const graficaData = JSON.parse(rawData || '{}');
+
+  const labels = graficaData.labels || [];
+  const valores = graficaData.valores || [];
+
+  new Chart(chartCanvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Monto Facturado (COP)',
+        data: valores,
+        backgroundColor: 'rgba(37, 99, 235, 0.75)',
+        borderColor: '#2563EB',
+        borderWidth: 2,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toLocaleString('es-CO');
+            }
+          }
+        }
+      }
+    }
+  });
+});
+</script>
+{% endif %}
+
+{% endblock %}
