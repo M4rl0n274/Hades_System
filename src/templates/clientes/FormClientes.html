@@ -3,21 +3,29 @@
 {% block barraNavegacion %}
 <main class="main-content">
   <div class="form-header-wrapper">
-    <h2>Registro / Edición de Cliente</h2>
+    <h2>Registro de Cliente</h2>
   </div>
 
   <div class="form-card">
-    <form method="POST" class="custom-form">
-      
+    <form method="POST" class="custom-form" id="formCliente" novalidate>
+
       <!-- Bloque 1: Información Personal (2 Columnas) -->
       <div class="form-grid grid-col-2">
         <div class="form-group">
           <label for="nombre">Nombre</label>
-          <input type="text" class="form-control" id="nombre" name="nombre" value="{{ cliente.nombre if cliente else '' }}" placeholder="Ingrese nombre" required>
+          <input type="text" class="form-control" id="nombre" name="nombre"
+                 value="{{ cliente.nombre if cliente else '' }}"
+                 placeholder="Ingrese nombre" required minlength="2"
+                 pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+"
+                 title="Ingrese un nombre válido, usando solo letras y espacios.">
         </div>
         <div class="form-group">
           <label for="apellido">Apellidos</label>
-          <input type="text" class="form-control" id="apellido" name="apellido" value="{{ cliente.apellido if cliente else '' }}" placeholder="Apellidos" required>
+          <input type="text" class="form-control" id="apellido" name="apellido"
+                 value="{{ cliente.apellido if cliente else '' }}"
+                 placeholder="Apellidos" required minlength="2"
+                 pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+"
+                 title="Ingrese apellidos válidos, usando solo letras y espacios.">
         </div>
       </div>
 
@@ -25,11 +33,39 @@
       <div class="form-grid grid-col-2">
         <div class="form-group">
           <label for="correo">Correo Electrónico</label>
-          <input type="email" class="form-control" id="correo" name="correo" value="{{ cliente.correo if cliente else '' }}" placeholder="correo@ejemplo.com" required>
+          <input type="email" class="form-control" id="correo" name="correo"
+                 value="{{ cliente.correo if cliente else '' }}"
+                 placeholder="correo@ejemplo.com" required
+                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                 title="Ingrese un correo válido que contenga @ y un dominio.">
         </div>
+
         <div class="form-group">
           <label for="password">Contraseña {% if cliente %}(Opcional){% endif %}</label>
-          <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" {% if not cliente %}required{% endif %}>
+          <div class="password-wrapper">
+            <input type="password" class="form-control" id="password" name="password"
+                   placeholder="••••••••"
+                   {% if not cliente %}required{% endif %}
+                   minlength="8"
+                   autocomplete="new-password"
+                   aria-describedby="passwordHelp passwordStrengthText">
+            <button type="button" class="password-toggle" id="togglePassword"
+                    aria-label="Mostrar contraseña" title="Mostrar contraseña">
+              <span class="password-eye" aria-hidden="true">◉</span>
+            </button>
+          </div>
+
+          <div class="password-strength" aria-live="polite">
+            <div class="password-strength-bar">
+              <div class="password-strength-fill" id="passwordStrengthFill"></div>
+            </div>
+            <small id="passwordStrengthText">Mínimo 8 caracteres y al menos un número.</small>
+            <div class="password-requirements" id="passwordHelp">
+              <span id="reqLength">8 caracteres</span>
+              <span id="reqNumber">1 número</span>
+              <span id="reqSymbol">1 símbolo = contraseña fuerte</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -37,15 +73,25 @@
       <div class="form-grid grid-col-3">
         <div class="form-group">
           <label for="documentoIdentidad">Documento de Identidad</label>
-          <input type="text" class="form-control" id="documentoIdentidad" name="documentoIdentidad" value="{{ cliente.documentoIdentidad if cliente else '' }}" placeholder="C.C / C.E" required>
+          <input type="text" class="form-control" id="documentoIdentidad" name="documentoIdentidad"
+                 value="{{ cliente.documentoIdentidad if cliente else '' }}"
+                 placeholder="C.C / C.E" required minlength="5" maxlength="20"
+                 pattern="[0-9A-Za-z.-]{5,20}"
+                 title="Ingrese un documento válido.">
         </div>
         <div class="form-group">
           <label for="edad">Edad</label>
-          <input type="number" class="form-control" id="edad" name="edad" value="{{ cliente.edad if cliente else '' }}" placeholder="Edad">
+          <input type="number" class="form-control" id="edad" name="edad"
+                 value="{{ cliente.edad if cliente else '' }}"
+                 placeholder="Edad" min="0" max="120" step="1">
         </div>
         <div class="form-group">
           <label for="telefono">Teléfono</label>
-          <input type="text" class="form-control" id="telefono" name="telefono" value="{{ cliente.telefono if cliente else '' }}" placeholder="Teléfono de contacto">
+          <input type="text" class="form-control" id="telefono" name="telefono"
+                 value="{{ cliente.telefono if cliente else '' }}"
+                 placeholder="Teléfono de contacto" inputmode="tel"
+                 pattern="[0-9+\s()-]{7,20}"
+                 title="Ingrese un teléfono válido.">
         </div>
       </div>
 
@@ -53,11 +99,15 @@
       <div class="form-grid grid-col-2">
         <div class="form-group">
           <label for="direccion">Dirección</label>
-          <input type="text" class="form-control" id="direccion" name="direccion" value="{{ cliente.direccion if cliente else '' }}" placeholder="Dirección de residencia">
+          <input type="text" class="form-control" id="direccion" name="direccion"
+                 value="{{ cliente.direccion if cliente else '' }}"
+                 placeholder="Dirección de residencia" maxlength="150">
         </div>
         <div class="form-group">
           <label for="FechaDeNacimiento">Fecha de Nacimiento</label>
-          <input type="date" class="form-control" id="FechaDeNacimiento" name="FechaDeNacimiento" value="{{ cliente.FechaDeNacimiento if cliente else '' }}">
+          <input type="date" class="form-control" id="FechaDeNacimiento" name="FechaDeNacimiento"
+                 value="{{ cliente.FechaDeNacimiento if cliente else '' }}"
+                 max="">
         </div>
       </div>
 
@@ -70,4 +120,210 @@
     </form>
   </div>
 </main>
+
+<style>
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-wrapper .form-control {
+    padding-right: 2.75rem;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 0.55rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    padding: 0.25rem 0.4rem;
+    cursor: pointer;
+    color: inherit;
+    line-height: 1;
+  }
+
+  .password-toggle:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .password-eye {
+    font-size: 1rem;
+  }
+
+  .password-strength {
+    margin-top: 0.4rem;
+  }
+
+  .password-strength-bar {
+    width: 100%;
+    height: 5px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #e5e7eb;
+  }
+
+  .password-strength-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.2s ease;
+  }
+
+  .password-strength-fill.weak {
+    width: 33%;
+    background: #dc3545;
+  }
+
+  .password-strength-fill.medium {
+    width: 66%;
+    background: #ffc107;
+  }
+
+  .password-strength-fill.strong {
+    width: 100%;
+    background: #28a745;
+  }
+
+  .password-strength small {
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .password-requirements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+  }
+
+  .password-requirements span {
+    opacity: 0.75;
+  }
+
+  .password-requirements span.valid {
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  @media (max-width: 576px) {
+    .password-requirements {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formCliente');
+    const password = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const strengthFill = document.getElementById('passwordStrengthFill');
+    const strengthText = document.getElementById('passwordStrengthText');
+    const reqLength = document.getElementById('reqLength');
+    const reqNumber = document.getElementById('reqNumber');
+    const reqSymbol = document.getElementById('reqSymbol');
+    const birthDate = document.getElementById('FechaDeNacimiento');
+    const email = document.getElementById('correo');
+
+    // El navegador siempre recibe la fecha en el formato que espera el input date.
+    const normalizeDate = function (value) {
+      if (!value) return '';
+      const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
+      return match ? match[1] : '';
+    };
+
+    birthDate.value = normalizeDate(birthDate.value);
+
+    // No permite seleccionar una fecha futura.
+    const today = new Date();
+    const todayString =
+      today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
+    birthDate.max = todayString;
+
+    // Mostrar / ocultar contraseña.
+    togglePassword.addEventListener('click', function () {
+      const isPassword = password.type === 'password';
+      password.type = isPassword ? 'text' : 'password';
+      togglePassword.setAttribute(
+        'aria-label',
+        isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+      );
+      togglePassword.setAttribute(
+        'title',
+        isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+      );
+    });
+
+    function updatePasswordStrength() {
+      const value = password.value;
+      const hasLength = value.length >= 8;
+      const hasNumber = /\d/.test(value);
+      const hasSymbol = /[^A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9\s]/.test(value);
+
+      reqLength.classList.toggle('valid', hasLength);
+      reqNumber.classList.toggle('valid', hasNumber);
+      reqSymbol.classList.toggle('valid', hasSymbol);
+
+      strengthFill.className = 'password-strength-fill';
+
+      if (!value) {
+        strengthText.textContent = 'Mínimo 8 caracteres y al menos un número.';
+        return;
+      }
+
+      if (!hasLength) {
+        strengthFill.classList.add('weak');
+        strengthText.textContent = 'Débil: debe tener mínimo 8 caracteres.';
+      } else if (!hasNumber) {
+        strengthFill.classList.add('weak');
+        strengthText.textContent = 'Débil: agrega al menos un número.';
+      } else if (!hasSymbol) {
+        strengthFill.classList.add('medium');
+        strengthText.textContent = 'Media: agrega un símbolo para que sea fuerte.';
+      } else {
+        strengthFill.classList.add('strong');
+        strengthText.textContent = 'Fuerte: cumple todos los requisitos.';
+      }
+    }
+
+    password.addEventListener('input', updatePasswordStrength);
+    updatePasswordStrength();
+
+    form.addEventListener('submit', function (event) {
+      const passwordValue = password.value.trim();
+
+      // En edición la contraseña puede quedar vacía para conservar la actual.
+      if (passwordValue && (!/.{8,}/.test(passwordValue) || !/\d/.test(passwordValue))) {
+        event.preventDefault();
+        password.focus();
+        alert('La contraseña debe tener mínimo 8 caracteres y al menos un número.');
+        return;
+      }
+
+      const emailValue = email.value.trim();
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+
+      if (!emailValid) {
+        event.preventDefault();
+        email.focus();
+        alert('Ingrese un correo electrónico válido que contenga @ y un dominio.');
+        return;
+      }
+
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        form.reportValidity();
+      }
+    });
+  });
+</script>
 {% endblock %}
