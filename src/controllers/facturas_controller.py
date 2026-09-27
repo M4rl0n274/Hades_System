@@ -145,11 +145,16 @@ def api_vendedores():
 @login_required
 @rol_required('Administrador', 'Vendedor', 'Cliente')
 def obtener_json(id):
+    # La API ahora permite a Cliente consultar GET /factura/<id> directamente,
+    # validando en el backend que sea SU PROPIA factura, y ya devuelve
+    # cliente_nombre, cliente_documento, vendedor_nombre, fecha y detalles
+    # (con producto_nombre incluido). Ya no hace falta ningún fallback aquí.
     try:
         factura_data = _client().get(f'/factura/{id}')
-        return jsonify(factura_data), 200
     except APIError as e:
-        return jsonify({'message': e.message}), 400
+        return jsonify({'message': e.message}), (e.status_code or 400)
+
+    return jsonify(factura_data), 200
 
 
 @factura_bp.route('/<int:id>/editar', methods=['GET', 'POST'])

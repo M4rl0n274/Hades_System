@@ -1,0 +1,171 @@
+<!--
+  Lógica compartida para generar el PDF de una factura.
+  Se incluye tanto en facturas/VerFacturas.html (Administrador/Vendedor)
+  como en clientes/MisFacturas.html (Cliente).
+
+  IMPORTANTE: si necesitas cambiar el estilo del PDF (logo, colores,
+  textos de la empresa, columnas de la tabla, etc.), modifica SOLO
+  este archivo. No lo dupliques de nuevo en las plantillas que lo usan.
+
+  Requisito en la plantilla que lo incluye: el botón de descarga debe
+  llamar a descargarPDF(id) o descargarPDF(id, event) -- el id de la
+  factura va primero, el event es opcional (solo se usa para detener
+  la propagación si el botón está dentro de una fila clicable).
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+// ==========================================================
+// Formato de moneda en pesos colombianos
+// ==========================================================
+function formatCOP(valor) {
+  const numero = parseFloat(valor);
+  if (isNaN(numero)) return '$0';
+  return '$' + numero.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
+// ==========================================================
+// Trae la factura completa (encabezado + detalles) desde el backend.
+// Devuelve null y muestra el error si algo falla, en vez de dejar
+// que el PDF se genere vacío en silencio.
+// ==========================================================
+async function fetchFactura(id) {
+  try {
+    const res = await fetch(`/facturas/${id}/json`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error('Error al obtener la factura:', data);
+      alert(data.message || 'No se pudo obtener la información de la factura.');
+      return null;
+    }
+
+    if (!data.detalles || data.detalles.length === 0) {
+      console.warn('La factura no trae "detalles" (productos):', data);
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Error de red al obtener la factura:', err);
+    alert('Error al generar el PDF de la factura.');
+    return null;
+  }
+}
+
+// ==========================================================
+// Punto de entrada único: descargarPDF(id, event opcional)
+// ==========================================================
+async function descargarPDF(id, event) {
+  if (event) event.stopPropagation();
+  await _generarPDF(id, 'descargar');
+}
+
+// Útil mientras se ajusta el estilo del PDF: abre el resultado en una
+// pestaña nueva en vez de descargarlo, para ver cada cambio al instante.
+// Puedes colgar esto de un botón temporal, o llamarlo desde la consola:
+// previsualizarPDF(8)
+async function previsualizarPDF(id, event) {
+  if (event) event.stopPropagation();
+  await _generarPDF(id, 'previsualizar');
+}
+
+async function _generarPDF(id, modo) {
+  const data = await fetchFactura(id);
+  if (!data) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Logo en la esquina superior derecha (si falla la carga, el PDF
+  // se genera igual, solo que sin logo).
+  const logoImg = new Image();
+  logoImg.src = "{{ url_for('static', filename='img/Logos_HS/logo_hs.png') }}";
+
+  logoImg.onload = function () {
+    generarCuerpoPDF(doc, data, logoImg, modo);
+  };
+
+  logoImg.onerror = function () {
+    generarCuerpoPDF(doc, data, null, modo);
+  };
+}
+
+function generarCuerpoPDF(doc, data, logoImg, modo) {
+  // --- Encabezado de la empresa (EDITABLE AQUÍ) ---
+  const tituloX = 14;
+  const tituloY = 20;
+
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text('Hades System', tituloX, tituloY);
+
+  if (logoImg) {
+    // Alinea el logo con el mismo centro vertical que el texto del título,
+    // en vez de una coordenada fija adivinada. Si cambias el tamaño de
+    // fuente del título, el logo se sigue alineando solo.
+    const tituloDim = doc.getTextDimensions('Hades System');
+    const logoSize = 16; // tamaño del logo en mm — ajústalo a gusto
+    const centroTitulo = tituloY - (tituloDim.h / 2);
+    const logoY = centroTitulo - (logoSize / 2);
+    doc.addImage(logoImg, 'PNG', 165, logoY, logoSize, logoSize);
+  }
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text('NIT: 900.123.456-7', 14, 26);
+  doc.text('Dirección: Calle 100 #11-20, Bogotá', 14, 30);
+  doc.text('Teléfono: +57 (601) 123 4567', 14, 34);
+
+  doc.setDrawColor(200, 200, 200);
+  doc.line(14, 38, 196, 38);
+
+  // --- Datos de la factura ---
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text(`FACTURA DE VENTA #${data.id}`, 14, 46);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Fecha: ${data.fecha || data.fecha_factura || 'N/A'}`, 14, 52);
+  doc.text(`Cliente: ${data.cliente_nombre || 'N/A'}`, 14, 58);
+  doc.text(`Documento: ${data.cliente_documento || 'N/A'}`, 14, 64);
+  doc.text(`Vendedor: ${data.vendedor_nombre || 'N/A'}`, 120, 58);
+  doc.text(`Registrado por: ${data.usuario_nombre || 'N/A'}`, 120, 64);
+
+  // --- Tabla de productos ---
+  const tableRows = (data.detalles || []).map(d => [
+    d.producto_nombre || `Producto #${d.id_producto}`,
+    d.cantidad,
+    formatCOP(d.precio_unitario),
+    formatCOP(d.subtotal_producto)
+  ]);
+
+  doc.autoTable({
+    startY: 72,
+    head: [['Producto', 'Cantidad', 'Valor Unitario', 'Subtotal']],
+    body: tableRows,
+    theme: 'striped',
+    headStyles: { fillColor: [21, 26, 45] } // antes: fillStyle (no existe en autotable, no pintaba)
+  });
+
+  // --- Resumen de totales ---
+  const finalY = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Subtotal: ${formatCOP(data.subtotal)}`, 140, finalY);
+  doc.text(`IVA (19%): ${formatCOP(data.iva)}`, 140, finalY + 6);
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Total: ${formatCOP(data.total)}`, 140, finalY + 14);
+
+  if (modo === 'previsualizar') {
+    // Abre el PDF en una pestaña nueva sin descargarlo — ideal para
+    // iterar el estilo rápidamente.
+    window.open(doc.output('bloburl'), '_blank');
+  } else {
+    doc.save(`Factura_${data.id}.pdf`);
+  }
+}
+</script>

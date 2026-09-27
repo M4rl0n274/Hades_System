@@ -64,58 +64,5 @@
     </div>
   </div>
 </main>
-
-<!-- Scripts para la generación de PDF con jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-<script>
-async function descargarPDF(idFactura) {
-  try {
-    const res = await fetch(`/facturas/${idFactura}/json`);
-    const f = await res.json();
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Encabezado del PDF
-    doc.setFontSize(18);
-    doc.setTextColor(21, 26, 45);
-    doc.text("FACTURA DE VENTA", 14, 20);
-
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Factura Nº: #${f.id}`, 14, 28);
-    doc.text(`Fecha: ${f.fecha || 'N/A'}`, 14, 34);
-
-    doc.text(`Cliente: ${f.cliente_nombre || 'N/A'}`, 120, 28);
-    doc.text(`Documento: ${f.cliente_documento || 'N/A'}`, 120, 34);
-
-    // Tabla de Detalles
-    const detalles = (f.detalles || []).map(d => [
-      d.producto_nombre || `Producto #${d.id_producto}`,
-      d.cantidad,
-      `$${parseFloat(d.precio_unitario).toLocaleString('es-CO')}`,
-      `$${parseFloat(d.subtotal_producto).toLocaleString('es-CO')}`
-    ]);
-
-    doc.autoTable({
-      startY: 42,
-      head: [['Producto', 'Cantidad', 'Precio Unitario', 'Subtotal']],
-      body: detalles,
-      headStyles: { fillColor: [21, 26, 45] }
-    });
-
-    const finalY = doc.lastAutoTable.finalY + 10;
-    doc.setFontSize(12);
-    doc.setTextColor(21, 26, 45);
-    doc.text(`Total Pagado: $${parseFloat(f.total).toLocaleString('es-CO')}`, 140, finalY);
-
-    doc.save(`Factura_#${f.id}.pdf`);
-
-  } catch (err) {
-    alert("Error al generar el PDF de la factura.");
-  }
-}
-</script>
+{% include 'facturas/_pdf_factura.html' %}
 {% endblock %}

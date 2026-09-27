@@ -12,7 +12,6 @@ def _client():
 @producto_bp.route('/')
 @login_required
 @rol_required('Administrador', 'Vendedor', 'Usuario')
-
 def index():
     q = request.args.get('q', '').strip()
     meta = {}
@@ -21,22 +20,31 @@ def index():
     try:
         params = {'page': page, 'per_page': 10}
         if q:
-            params['q'] = q  
-    
-        data = _client().get('/productos/', params=params)   # <-- ESTA ES LA LÍNEA MODIFICADA
-        print(f"data: {data}")  # Debugging line to check the structure of the response
+            params['q'] = q
+
+        data = _client().get('/productos/', params=params)
         productos = APIClient.as_list(data)
         meta = data.get('meta', {}) if isinstance(data, dict) else {}
-        
+
         if meta:
             meta['pages'] = meta.get('total_pages', meta.get('pages', 1))
             meta['prev_num'] = meta.get('page', 1) - 1
             meta['next_num'] = meta.get('page', 1) + 1
-        
+
+        # --- Enriquecer productos con el nombre de la categoría ---
+        try:
+            cat_data = _client().get('/categorias/', params={'per_page': 1000})
+            categorias = APIClient.as_list(cat_data)
+            categorias_map = {c['id']: c['nombre_categoria'] for c in categorias}
+        except Exception:
+            categorias_map = {}
+
+        for p in productos:
+            p['nombre_categoria'] = categorias_map.get(p.get('id_categoria'))
+
     except Exception as e:
         productos = []
 
-    print(productos)  # Debugging line to check the structure of the response
     return render_template('productos/Verproducto.html', productos=productos, meta=meta)
 
 

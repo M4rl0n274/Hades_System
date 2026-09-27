@@ -79,7 +79,6 @@ def sesion_expirada():
 # Rutas
 # ---------------------------------------------------------------------------
 
-# En src/controllers/auth_controller.py
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

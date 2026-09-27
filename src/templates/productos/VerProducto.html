@@ -39,7 +39,7 @@
             <th data-column="codigo">Código</th>
 
             <!-- La columna Acciones solo se muestra a roles que pueden realizar acciones -->
-            {% if tiene_rol('Administrador', 'Vendedor') %}
+            {% if tiene_rol('Administrador') %}
             <th data-column="acciones">Acciones</th>
             {% endif %}
           </tr>
@@ -50,17 +50,17 @@
             <td data-label="ID" class="font-weight-bold">{{ producto.id }}</td>
             <td data-label="Nombre">{{ producto.nombre_producto }}</td>
             <td data-label="Descripción" class="text-secondary">{{ producto.descripcion }}</td>
-            <td data-label="Categoría">{{ producto.id_categoria }}</td>
+            <td data-label="Categoría">{{ producto.nombre_categoria or producto.id_categoria }}</td>
             <td data-label="Valor Unitario" class="font-weight-bold">{{ producto.valor_unitario | cop }}</td>
             <td data-label="Stock">{{ producto.stock }}</td>
             <td data-label="Código">{{ producto.codigo }}</td>
 
             <!-- Celda de acciones condicional -->
-            {% if tiene_rol('Administrador', 'Vendedor') %}
+            {% if tiene_rol('Administrador') %}
             <td data-label="Acciones">
               
               <!-- Editar: Administrador y Vendedor -->
-              {% if tiene_rol('Administrador', 'Vendedor') %}
+              {% if tiene_rol('Administrador') %}
               <a href="{{ url_for('productos.editar', id=producto.id) }}" class="btn btn-primary btn-sm">Editar</a>
               {% endif %}
 
