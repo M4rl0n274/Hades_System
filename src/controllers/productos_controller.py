@@ -12,18 +12,6 @@ def _client():
 @producto_bp.route('/')
 @login_required
 @rol_required('Administrador', 'Vendedor', 'Usuario')
-# def index():
-#     q = request.args.get('q', '').strip()
-#     try:
-#         data = _client().get('/productos/')
-#         print(f"data: {data}")  # Debugging line to check the structure of the response
-#         productos = APIClient.as_list(data)
-#     except APIError as e:        
-#         productos = []
-
-#     print(productos)  # Debugging line to check the structure of the response
-#     return render_template('productos/VerProducto.html', productos=productos, q=q)
-
 
 def index():
     q = request.args.get('q', '').strip()
@@ -89,7 +77,7 @@ def nuevo():
             flash(f'Error al crear cliente: {e.message}', 'danger')
             
             
-# ========== CÓDIGO NUEVO PARA CARGAR CATEGORÍAS EN MÉTODO GET ==========
+# Para cargar las categorias en el metodo Get
     try:
         data_categorias = _client().get('/categorias/') 
         categorias = APIClient.as_list(data_categorias) # Adaptado a tu método actual

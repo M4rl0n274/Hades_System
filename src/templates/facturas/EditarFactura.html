@@ -44,7 +44,26 @@
     </form>
 
     <div class="form-divider"></div>
-      
+
+    <!-- Resumen de Totales: se recalcula en el backend cada vez que se guarda un cambio en el detalle -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+      <div style="min-width: 250px; background: #f8f9fa; padding: 1rem; border-radius: 6px; border: 1px solid #dee2e6;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span>Subtotal:</span>
+          <strong>${{ '{:,.0f}'.format(factura.subtotal|float(0)).replace(',', '.') }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span>IVA (19%):</span>
+          <strong>${{ '{:,.0f}'.format(factura.iva|float(0)).replace(',', '.') }}</strong>
+        </div>
+        <hr style="margin: 0.5rem 0;">
+        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; color: #2c3e50;">
+          <span>Total:</span>
+          <strong>${{ '{:,.0f}'.format(factura.total|float(0)).replace(',', '.') }}</strong>
+        </div>
+      </div>
+    </div>
+
     <!-- Sección 2: Detalle de Productos Editable -->
     <div class="dynamic-section-header" style="margin-top: 2rem; margin-bottom: 1rem;">
       <h3>Productos de esta Factura</h3>
@@ -67,28 +86,22 @@
           <tr>
             <td>#{{ item.id }}</td>
             <td>{{ item.producto_nombre }}</td>
-
-            <!-- Formulario individual para actualizar la cantidad del ítem -->
-            <form method="POST" action="{{ url_for('facturas.actualizar_detalle', id_detalle=item.id) }}">
-              <input type="hidden" name="id_factura" value="{{ factura.id }}">
-              <input type="hidden" name="precio_unitario" value="{{ item.precio_unitario }}">
-              <td>
-                <input type="number" min="1" name="cantidad" value="{{ item.cantidad }}" class="form-control" style="width: 90px; display: inline-block;" required>
-              </td>
-              <td>${{ item.precio_unitario }}</td>
-              <td>${{ item.subtotal_producto }}</td>
-              <td>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
-            </form>
-
-                  <!-- Formulario individual para quitar el ítem -->
-                  <form method="POST" action="{{ url_for('facturas.eliminar_detalle', id_detalle=item.id) }}" style="display:inline;">
-                    <input type="hidden" name="id_factura" value="{{ factura.id }}">
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de quitar este producto de la factura?');">Quitar</button>
-                  </form>
-                </div>
-              </td>
+            <td>
+              <!-- El atributo form= asocia este input al <form> declarado fuera de la tabla,
+                   sin necesidad de que el <form> envuelva el <td> (eso es lo que rompía el envío) -->
+              <input type="number" min="1" name="cantidad" value="{{ item.cantidad }}"
+                     form="form-actualizar-{{ item.id }}"
+                     class="form-control" style="width: 90px; display: inline-block;" required>
+            </td>
+            <td>${{ '{:,.0f}'.format(item.precio_unitario|float(0)).replace(',', '.') }}</td>
+            <td>${{ '{:,.0f}'.format(item.subtotal_producto|float(0)).replace(',', '.') }}</td>
+            <td>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button type="submit" form="form-actualizar-{{ item.id }}" class="btn btn-primary btn-sm">Guardar</button>
+                <button type="submit" form="form-eliminar-{{ item.id }}" class="btn btn-danger btn-sm"
+                        onclick="return confirm('¿Estás seguro de quitar este producto de la factura?');">Quitar</button>
+              </div>
+            </td>
           </tr>
           {% else %}
           <tr>
@@ -98,6 +111,19 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Formularios reales de cada fila, declarados FUERA de la tabla (HTML válido).
+         Los inputs/botones de arriba se asocian a ellos vía el atributo form="...". -->
+    {% for item in factura.detalles %}
+    <form id="form-actualizar-{{ item.id }}" method="POST"
+          action="{{ url_for('facturas.actualizar_detalle', id_detalle=item.id) }}" style="display:none;">
+      <input type="hidden" name="id_factura" value="{{ factura.id }}">
+    </form>
+    <form id="form-eliminar-{{ item.id }}" method="POST"
+          action="{{ url_for('facturas.eliminar_detalle', id_detalle=item.id) }}" style="display:none;">
+      <input type="hidden" name="id_factura" value="{{ factura.id }}">
+    </form>
+    {% endfor %}
 
   </div>
 </main>

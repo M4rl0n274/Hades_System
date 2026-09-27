@@ -207,12 +207,10 @@ def eliminar(id):
 def actualizar_detalle(id_detalle):
     id_factura = request.form.get('id_factura')
     cantidad = request.form.get('cantidad', type=int)
-    precio_unitario = request.form.get('precio_unitario', type=float)
 
     try:
         _client().put(f'/detalle_factura/{id_detalle}', json={
-            'cantidad': cantidad,
-            'precio_unitario': precio_unitario
+            'cantidad': cantidad
         })
         flash('Cantidad del producto actualizada exitosamente', 'success')
     except APIError as e:

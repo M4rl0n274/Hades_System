@@ -37,12 +37,24 @@ def rol_required(*roles):
         @wraps(f)
         def decorada(*args, **kwargs):
             usuario = session.get('usuario') or {}
-            if usuario.get('rol') not in roles:
+            rol_actual = usuario.get('rol')
+            
+            if rol_actual not in roles:
                 flash('No tienes permisos para acceder a esa sección.', 'danger')
-                return redirect(url_for('productos.index'))
+                
+                # Redirección dinámica y segura para evitar ERR_TOO_MANY_REDIRECTS
+                if rol_actual == 'Cliente':
+                    return redirect(url_for('clientes.mis_facturas'))
+                elif rol_actual == 'Usuario':
+                    return redirect(url_for('productos.index'))
+                elif rol_actual == 'Administrador':
+                    return redirect(url_for('home.index'))
+                else:
+                    return redirect(url_for('auth.login'))
+                    
             return f(*args, **kwargs)
         return decorada
-    return decorador
+    return decorador    
 
 
 # ---------------------------------------------------------------------------
